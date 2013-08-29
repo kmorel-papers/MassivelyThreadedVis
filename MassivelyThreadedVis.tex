@@ -92,14 +92,51 @@
 \maketitle
 
 \begin{abstract}
-\fix{Add an abstract.}
+
+As the number of cores in processors increase and accelerator architectures
+are becoming more common, an ever greater number of threads is required to
+achieve full processor utilization. Our current parallel scientific
+visualization codes rely on a partitioning of data to achieve parallel
+processing, but this approach will not scale as we approach massive
+threading in which work is distributed in such a fine level that each
+thread is responsible for a minute portion of data. In this paper we
+characterize the challenges of refactoring our current visualization
+algorithms by considering the finest portion of work each performs and
+examining the domain of input data, overlaps of output domains, and
+interdependencies among work instances. \fix{Some further sentence about
+  number of classes and how it will help focus research.}
+
 \end{abstract}
 
 \section{Introduction}
 
-\fix{Start here.}
+\noindent
+Processor clock and execution rates have flatlined. Instead, successive
+generations of processors provide more parallel threading
+capability\lcite{Sutter2005}. Recent CPUs feature multiple cores and
+hyperthreading technology to allow each core to run concurrent
+threads. Furthermore, accelerator type architectures, which have
+lightweight cores grouped to share control, are becoming increasingly
+popular for their high price and power to performance ratios.
 
-ParaView\lcite{ParaView}.
+High performance computing is also seeing a remarkable increase in the
+parallelism required on large-scale systems. Consider, for example, the
+last two generations of leadership-class computers at the Oak Ridge
+Leadership Computing Facility. The previous Jaguar-XT5 system had a peak
+performance of about 2 petaflops using about 200 thousand concurrent
+processes. The current Titan-XK7 system, which incoporates GPU
+accelerators, has a peak performance of over 20 petaflops but can require
+70 to 500 \emph{million} concurrent threads in order to achieve that.
+
+Production visualization products today achieve parallel scalability using
+a data parallel method that relies on partitioning the data into
+independent domains for each process\lcite{Ahrens2001}. Each domain is
+processed independently, so ghost regions and overlap are required at
+domain boundaries so that the interaction of work on parallel processes can
+be ignored. However, this approach is infeasible when dealing with massive
+amounts of threads on these emerging architectures. We now need to design
+new algorithms with a key on data interdependencies to process efficiently
+in these massively multithreaded environment.
 
 \bibliographystyle{abbrv}
 \bibliography{MassivelyThreadedVis}
