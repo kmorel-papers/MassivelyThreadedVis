@@ -31,6 +31,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{varioref}
 \usepackage{fancyvrb}
@@ -77,13 +78,22 @@
 \renewcommand{\floatpagefraction}{.75}
 
 \newenvironment{packed_itemize}{
-\begin{itemize}
-  \setlength{\topsep}{0pt}
-  \setlength{\itemsep}{0pt}
-  \setlength{\parskip}{0pt}
-  \setlength{\parsep}{0pt}
-  \setlength{\partopsep}{0pt}
-}{\end{itemize}}
+  \begin{itemize}[noitemsep]
+}{
+  \end{itemize}
+}
+
+\newcommand{\algorithmclasssection}[1]{\paragraph{#1}}
+
+\newcommand{\algorithmclass}[5]{
+  \algorithmclasssection{#1} %
+  \begin{description}[leftmargin=4.5em,style=nextline,noitemsep]
+  \item[Input] #2
+  \item[Output] #3
+  \item[Overlap] #4
+  \item[Algorithms] #5
+  \end{description}
+}
 
 \hyphenation{Para-View Map-Re-duce}
 
@@ -137,6 +147,113 @@ be ignored. However, this approach is infeasible when dealing with massive
 amounts of threads on these emerging architectures. We now need to design
 new algorithms with a key on data interdependencies to process efficiently
 in these massively multithreaded environment.
+
+\section{Classification of Visualization Algorithms}
+
+
+\algorithmclass{Basic Mapping}
+               {Single field element} % Input
+               {Single field element} % Output
+               {None} % Overlap
+               {Append Attributes, Append Datasets/Geometry, Calculator,
+                 Elevation, Generate Ids, Process Ids, Reflect, Transform,
+                 Warp}
+
+\noindent
+Some of these operate on the coordinates of mesh points, but when treated
+as a field the behavior characteristics are the same.
+
+
+\algorithmclass{Map by Cell}
+               {Cell topology} % Input
+               {Single field element} % Output
+               {None} % Overlap
+               {Cell Centers, Point Data to Cell Data, Cell Derivitives,
+                 Mesh Quality}
+
+\noindent
+And now here is some description of this class.
+
+
+\algorithmclass{Reconnect Cell}
+               {Cell topology} % Input
+               {Cell connections} % Output
+               {None} % Overlap
+               {Extract Cells by Region, Extract Selection, Threshold,
+                 Triangulate}
+
+\noindent
+Description.
+
+Some would benefit from subsetting points. Ours explicitly does this, EAVL
+uses selection maps to point back to original data.
+
+
+\algorithmclass{Build Independent Topology}
+               {Cell topology} % Input
+               {Cell topology} % Output
+               {None} % Overlap
+               {Glyph, Shrink, Tube}
+
+\noindent
+Description.
+
+
+\algorithmclass{Build Connected Topology}
+               {Cell topology} % Input
+               {Cell topology} % Output
+               {Duplicate constituent elements of output} % Overlap
+               {Clean, Clip, Contour, Extrusion, Isovolume, Slice, Subdivision}
+
+\noindent
+Description.
+
+
+\algorithmclass{Capture Cell Adjacencies}
+               {Constituent element with incident cells} % Input
+               {Field or cell connections for constituent element} % Output
+               {Duplicate constituent elements of input} % Overlap
+               {Curvature, Cell Data to Point Data, Extract Edges, Extract
+                 Surface (external faces), Feature Edges, Gradient
+                 Estimation, Normal Generation}
+
+\noindent
+Description.
+
+
+\algorithmclass{Globally Reduce}
+               {Varies} % Input
+               {Aggregated value} % Output
+               {Global reduction on intermediate values} % Overlap
+               {Histogram, Integrate, Outline, Statistics}
+
+\noindent
+Description.
+
+
+\algorithmclass{Probe Data}
+               {Searchable structure, Point location} % Input
+               {Varies} % Output
+               {None} % Overlap
+               {Probe Location, Quadric Clustring, Resample with Dataset,
+                 Streamlines, Streaklines}
+
+\noindent
+Description.
+
+
+
+\algorithmclasssection{Remaining Algorithms}
+
+Extract Subset (from structured data)
+
+Image based algorithms: kernel convolutions (gradient) and FFT.
+
+D3
+
+Connectivity
+Delaunay
+
 
 \bibliographystyle{abbrv}
 \bibliography{MassivelyThreadedVis}
