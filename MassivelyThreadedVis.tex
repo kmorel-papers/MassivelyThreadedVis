@@ -148,7 +148,31 @@ amounts of threads on these emerging architectures. We now need to design
 new algorithms with a key on data interdependencies to process efficiently
 in these massively multithreaded environment.
 
+Unfortunately, to perform scientific visualization with massive threading,
+we need to redesign our algorithms to work effectively with fine-grained,
+independent operations. There has already been significant work in making
+scientific visualization algorithms work well with shared memory threading
+and accelerator types of architectures\fix{cite,cite,cite}, but all these
+projects focus on the implementation of a single or select fixed set of
+algorithms. Our goal in this paper is to present commonalities among
+various algorithms that share parallel-programming challenges. By
+addressing this higher level challenges, we can make better progress to
+ensure that our scalable scientific visualization needs are met.
+
+To identify these high level parallel-programming challenges, we first
+revisit the key principles on which we base our current parallel
+visualization algorithms (Section~\ref{sec:KeyPrinciples}) and then
+categorize our current set of scientific visualization algorithms based on
+behavior of the fundamental computation
+(Section~\ref{sec:Classification}).
+
+
+\section{Key Principles}
+\label{sec:KeyPrinciples}
+
+
 \section{Classification of Visualization Algorithms}
+\label{sec:Classification}
 
 
 \algorithmclass{Basic Mapping}
