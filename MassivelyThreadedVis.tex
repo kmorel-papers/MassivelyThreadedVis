@@ -170,14 +170,82 @@ behavior of the fundamental computation
 \section{Key Principles}
 \label{sec:KeyPrinciples}
 
+\noindent
+Our current scalable scientific visualization relies on a coarse
+partitioning of data into domains that can often be processed
+independently. Law \etal\scite{Law1999} provides the following three key
+principles that must be satisfied for this independent processing to behave
+correctly.
+
+\begin{description}
+\item[Data Separability] The data can be broken into domains in a way that
+  is simple and efficient. Furthermore, algorithms behave properly on
+  independent domains.
+\item[Mappable Input] Given an identification for a portion of the output,
+  the input domain responsible for this output can be determined. The
+  output portion can, and often is, identified as simple piece $i$ of $N$.
+\item[Result Invariant] The output of the algorithm is equivalent across
+  all possible partitioning.
+\end{description}
+
+At first glance, it would appear that any algorithm abiding these key
+principles could be partitioned indefinitely. However, there are two
+problems that arise when building a massively threaded algorithm in which
+the data is partitioned (potentially) down to domains of single elements.
+
+The first problem is that many algorithms do not really have a clear
+mapping from an algorithm's output to its input. For example, when
+computing a contour\lcite{Lorensen1987}, it is seldom practical to know a
+priori how large the output will be, from what domain of the input each
+piece of the output will originate, and what the distribution of elements
+in the output partitions will be. As long as the data partitioning is
+coarse enough, managing uneven or even empty domains is
+inconsequential. Load imbalance in downstream processing can either be
+resolved by dynamic rebalancing or, more commonly, simply tolerating
+it. However, to achieve efficency with massive threading, it is important
+to know the precise elements on which to schedule the working
+threads. Thus, it is often more practical to determine partitioning by
+mapping from input to output rather than output to input.
+
+The second problem is that although plenty of algorithms are result
+invariant in that different partitioning results in \emph{equivalent}, the
+structures they build are not strictly \emph{isomorphic}. Partitioning data
+often results in duplicate information on domain boundaries. \fix{Add
+  figure and description demonstrating duplicated points when slice is
+  partitioned.}
+
+This duplication of results is a convenient mechanism to avoid
+communication in parallel processing, and in coarse-level parallelism the
+duplication is easily managed through ghost regions. However, if massive
+threading reduces each domain to every independent element, the duplication
+is dramatic and creating ghost regions is infeasible. It is therefore not
+practical to assume result invariance for most algorithms. Instead we have
+to identify and characterize the \keyterm{overlap} of the work occuring on
+independent threads and design strategies to manage the work
+overlap. \fix{This is a pretty weak definition.}
+
+With these issues in mind, we provide an analogous set of key principles
+for the operation of scientific visualization algorithms for massive
+threading.
+
+\begin{description}
+\item[Data Separability] The data can be broken down to an elemental level
+  fine enough to provide independent work for sufficient threads.
+\item[Discoverable Input Mapping] The existance of output elements can be
+  efficiently determined from the input.
+\item[Collective Work Overlap] In the cases where work is not independent,
+  the overlap of responsibility can be resolved through efficient
+  collective operations.
+\end{description}
+
 
 \section{Classification of Visualization Algorithms}
 \label{sec:Classification}
 
 
 \algorithmclass{Basic Mapping}
-               {Single field element} % Input
-               {Single field element} % Output
+               {Field element (single)} % Input
+               {Field element (single)} % Output
                {None} % Overlap
                {Append Attributes, Append Datasets/Geometry, Calculator,
                  Elevation, Generate Ids, Process Ids, Reflect, Transform,
@@ -189,8 +257,8 @@ as a field the behavior characteristics are the same.
 
 
 \algorithmclass{Map by Cell}
-               {Cell topology} % Input
-               {Single field element} % Output
+               {Cell topology (single)} % Input
+               {Field element (single)} % Output
                {None} % Overlap
                {Cell Centers, Point Data to Cell Data, Cell Derivitives,
                  Mesh Quality}
@@ -200,8 +268,8 @@ And now here is some description of this class.
 
 
 \algorithmclass{Reconnect Cell}
-               {Cell topology} % Input
-               {Cell connections} % Output
+               {Cell topology (single)} % Input
+               {Cell connections (zero or more)} % Output
                {None} % Overlap
                {Extract Cells by Region, Extract Selection, Threshold,
                  Triangulate}
@@ -214,8 +282,8 @@ uses selection maps to point back to original data.
 
 
 \algorithmclass{Build Independent Topology}
-               {Cell topology} % Input
-               {Cell topology} % Output
+               {Cell topology (single)} % Input
+               {Cell topology (known constant number)} % Output
                {None} % Overlap
                {Glyph, Shrink, Tube}
 
@@ -224,8 +292,8 @@ Description.
 
 
 \algorithmclass{Build Connected Topology}
-               {Cell topology} % Input
-               {Cell topology} % Output
+               {Cell topology (single)} % Input
+               {Cell topology (zero or more)} % Output
                {Duplicate constituent elements of output} % Overlap
                {Clean, Clip, Contour, Extrusion, Isovolume, Slice, Subdivision}
 
@@ -234,8 +302,8 @@ Description.
 
 
 \algorithmclass{Capture Cell Adjacencies}
-               {Constituent element with incident cells} % Input
-               {Field or cell connections for constituent element} % Output
+               {Constituent element (single) with incident cells (varies)} % Input
+               {Field or cell connections for constituent element (single)} % Output
                {Duplicate constituent elements of input} % Overlap
                {Curvature, Cell Data to Point Data, Extract Edges, Extract
                  Surface (external faces), Feature Edges, Gradient
@@ -247,7 +315,7 @@ Description.
 
 \algorithmclass{Globally Reduce}
                {Varies} % Input
-               {Aggregated value} % Output
+               {Aggregated value (single)} % Output
                {Global reduction on intermediate values} % Overlap
                {Histogram, Integrate, Outline, Statistics}
 
@@ -256,7 +324,7 @@ Description.
 
 
 \algorithmclass{Probe Data}
-               {Searchable structure, Point location} % Input
+               {Searchable structure, Point location (single)} % Input
                {Varies} % Output
                {None} % Overlap
                {Probe Location, Quadric Clustring, Resample with Dataset,
