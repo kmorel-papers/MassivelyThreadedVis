@@ -321,9 +321,19 @@ serial counterparts.
                {Field element (single)} % Input
                {Field element (single)} % Output
                {None} % Interdependence
-               {Append Attributes, Append Datasets/Geometry, Calculator,
-                 Elevation, Generate Ids, Random Vectors, Reflect, Surface
-                 Vectors, Texture Map, Transform, Warp}
+               {
+                 Append Attributes,
+                 Append Datasets,
+                 Calculator,
+                 Elevation,
+                 Generate Ids,
+                 Image/Rectilinear Data to Point Set,
+                 Random Vectors,
+                 Reflect,
+                 Surface Vectors,
+                 Texture Map Coordiantes,
+                 Transform,
+                 Warp}
 
 \noindent
 The \algclass{Basic Mapping} algorithms operate on an array of field values
@@ -352,8 +362,12 @@ to simplify porting using a generic programming interface over them.
                {Cell topology (single)} % Input
                {Field element (single)} % Output
                {None} % Interdependence
-               {Cell Centers, Point Data to Cell Data, Cell Derivatives,
-                 Mesh Quality}
+               {
+                 Cell Centers,
+                 Cell Derivitives,
+                 Mesh Quality,
+                 Point Data to Cell Data
+               }
 
 \noindent
 The \algclass{Map by Cell} class is very similar to \algclass{Basic
@@ -378,8 +392,14 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
                {Cell topology (single)} % Input
                {Cell connections (zero or more)} % Output
                {None} % Interdependence
-               {Extract Cells by Region, Extract Selection, Mask Points,
-                 Tetrahedralize, Threshold, Triangulate}
+               {
+                 Extract Cells by Region,
+                 Extract Selection,
+                 Mask Points,
+                 Tetrahedralize,
+                 Threshold,
+                 Triangulate
+               }
 
 \noindent
 There are several apparent patterns in algorithms that build a topological
@@ -423,7 +443,12 @@ still references it.
                {Cell topology (single)} % Input
                {Cell topology (constant number)} % Output
                {None} % Interdependence
-               {Glyph, Ribbon, Shrink, Tube}
+               {
+                 Glyph,
+                 Ribbon,
+                 Shrink,
+                 Tube
+               }
 
 \noindent
 Algorithms that \algclass{Build Independent Topology} create new geometry
@@ -453,8 +478,16 @@ these data must be interpreted and managed as such.
                {Cell topology (single)} % Input
                {Cell topology (zero or more)} % Output
                {Duplicate output points} % Interdependence
-               {Clean, Clip, Contour, Extrusion, Isovolume, Slice,
-                 Subdivision, Tessellate}
+               {
+                 Clean,
+                 Clip,
+                 Contour,
+                 Extrusion,
+                 Isovolume,
+                 Slice,
+                 Subdivision,
+                 Tessellate
+               }
 
 \noindent
 The most technically complicated class of algorithms we find that generate
@@ -496,9 +529,16 @@ better results.
                {Constituent element (single) with incident cells (varies)} % Input
                {Field or cell connections for constituent element (single)} % Output
                {Duplicate constituent elements of input} % Interdependence
-               {Curvature, Cell Data to Point Data, Extract Edges, Extract
-                 Surface (external faces), Feature Edges, Gradient
-                 Estimation, Normal Generation}
+               {
+                 Curvature,
+                 Cell Data to Point Data,
+                 Extract Edges,
+                 Extract Surface (external faces),
+                 Feature Edges,
+                 Gradient,
+                 Normal Generation,
+                 Smooth
+               }
 
 \noindent
 The previously listed algorithms all operate on a single point in the mesh
@@ -537,7 +577,12 @@ likely need to be built to convert between the representations anyway.
                {Varies} % Input
                {Aggregated value (single)} % Output
                {Reduction on intermediate values} % Interdependence
-               {Histogram, Integrate, Outline, Statistics}
+               {
+                 Histogram,
+                 Integrate,
+                 Outline,
+                 Statistics
+               }
 
 \noindent
 Some scientific visualization algorithms perform an aggregation on the
@@ -560,8 +605,14 @@ the distributed-memory interconnect.
                {Searchable data, Query key (single)} % Input
                {Varies} % Output
                {None} % Interdependence
-               {Probe Location, Quadric Clustering, Resample with Dataset,
-                 Streamlines, Streaklines}
+               {
+                 Particle Tracer,
+                 Probe Location,
+                 Quadric Clustring,
+                 Resample with Dataset,
+                 Stream Tracer,
+                 Streaklines
+               }
 
 \noindent
 Most scientific visualization algorithms operate on a domain that is easily
