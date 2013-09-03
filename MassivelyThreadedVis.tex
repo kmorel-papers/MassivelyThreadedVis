@@ -83,14 +83,20 @@
   \end{itemize}
 }
 
-\newcommand{\algorithmclasssection}[1]{\paragraph{#1}}
+\newcommand{\algclass}[1]{\textsf{#1}}
+\newcommand{\alg}[1]{#1}
+
+\newcommand{\algorithmclasssection}[1]{
+  \vspace{\baselineskip}\noindent{\large\textbf{\algclass{#1}}}}
 
 \newcommand{\algorithmclass}[5]{
   \algorithmclasssection{#1} %
-  \begin{description}[leftmargin=4.5em,style=nextline,noitemsep]
+  \vspace{-.5\baselineskip}
+  \begin{description}[leftmargin=9em,style=nextline,noitemsep]
+    \raggedright
   \item[Input] #2
   \item[Output] #3
-  \item[Overlap] #4
+  \item[Interdependence] #4
   \item[Algorithms] #5
   \end{description}
 }
@@ -98,6 +104,8 @@
 \hyphenation{Para-View Map-Re-duce}
 
 \begin{document}
+
+\sloppy
 
 \maketitle
 
@@ -220,9 +228,10 @@ duplication is easily managed through ghost regions. However, if massive
 threading reduces each domain to every independent element, the duplication
 is dramatic and creating ghost regions is infeasible. It is therefore not
 practical to assume result invariance for most algorithms. Instead we have
-to identify and characterize the \keyterm{overlap} of the work occuring on
-independent threads and design strategies to manage the work
-overlap. \fix{This is a pretty weak definition.}
+to identify and characterize the \keyterm{interdependence} of the work
+where concurrent threads produce coincident data or the threads otherwise
+require collective operations. It is only then that we can design
+strategies to manage the work interdependence.
 
 With these issues in mind, we provide an analogous set of key principles
 for the operation of scientific visualization algorithms for massive
@@ -233,58 +242,143 @@ threading.
   fine enough to provide independent work for sufficient threads.
 \item[Discoverable Input Mapping] The existance of output elements can be
   efficiently determined from the input.
-\item[Collective Work Overlap] In the cases where work is not independent,
-  the overlap of responsibility can be resolved through efficient
-  collective operations.
+\item[Collective Work] In the cases where work is not independent, the
+  overlap of responsibility can be resolved through efficient collective
+  operations.
 \end{description}
 
 
 \section{Classification of Visualization Algorithms}
 \label{sec:Classification}
 
+\noindent
+To better understand the effort involved with updating our scientific
+visualization algorithms to massively threaded processors, we look into the
+behavior of the algorithms we are currently using in production
+tools. Specifically, we consider those algorithms available in ParaView, a
+popular open-source scalable scientific visualization
+application\lcite{ParaView}.
+
+For each algorithm in ParaView, we consider the smallest unit of data on
+which the algorithm can be sensibly run. Given this unit of
+\keyterm{input}, we identify what \keyterm{output} is created for
+it. Assuming that many threads are simultaneously producing output, we also
+identify the \keyterm{interdependence} among these threads.
+
+From this information we derive classes of scientific visualization
+algorithms, where the algorithms of each class share the same input,
+output, and interdependence characteristics. This classification is
+constructive because once we resolve the challenges of mapping input to
+output and managing interdependence with collective operations, the
+algorithms within each class are straightforward to implement from their
+serial counterparts.
 
 \algorithmclass{Basic Mapping}
                {Field element (single)} % Input
                {Field element (single)} % Output
-               {None} % Overlap
+               {None} % Interdependence
                {Append Attributes, Append Datasets/Geometry, Calculator,
                  Elevation, Generate Ids, Process Ids, Reflect, Transform,
                  Warp}
 
 \noindent
-Some of these operate on the coordinates of mesh points, but when treated
-as a field the behavior characteristics are the same.
+The \algclass{Basic Mapping} algorithms operate on an array of field values
+and generate another array of field values. Each output field value is
+computed independently using only the associated input value (or values if
+there is more than one input array).
+
+The typical purpose of this type of algorithm is to generate a derived
+field of data. Some of these operate on the coordinates of mesh points, for
+example the \alg{Transform} filter moves and warps the data with an affine
+transformation. However, when point coodinates are treated as a field, the
+behavior characteristics are the same.
+
+The \algclass{Basic Mapping} class is essentially just a parallel
+\texttt{for} operation over input and output field arrays. As such, basic
+mapping is essentally built in to many multi- and many-core languages and
+APIs including OpenMP (parallel for pragma\lcite{Quinn2004}), CUDA (triple
+chevron notation\lcite{Sanders2011}), Thrust (for\_each generic
+algorithm\lcite{Thrust}), and Intel Threading Building Blocks
+(parallel\_for generic algorithm\lcite{TBB}). Although all of these systems
+use significantly different syntax, Baker \etal\scite{Baker2010} show how
+to simplify porting using a generic programming interface over them.
 
 
 \algorithmclass{Map by Cell}
                {Cell topology (single)} % Input
                {Field element (single)} % Output
-               {None} % Overlap
+               {None} % Interdependence
                {Cell Centers, Point Data to Cell Data, Cell Derivitives,
                  Mesh Quality}
 
 \noindent
-And now here is some description of this class.
+The \algclass{Map by Cell} class is very similar to \algclass{Basic
+  Mapping} with the exception that the input field arrays are not a
+one-to-one mapping to the output field arrays. Instead, these operations
+are performed using the information over a complete cell and attached
+fields.
+
+Operations of this class involve characterizing the shape of the cell (as
+in the case of \alg{Cell Centers} and \alg{Mesh Quality}) or math
+operations that operation on a continuous function rather than discrete
+values (as is the case for \alg{Cell Derivitives}).
+
+Although parallel threads generally do access overlapped portions of the
+input data, the calculations computed by each thread are independent and
+there is no overlap in the output they produce and are thus easy to
+parallelize. The EAVL library and Dax toolkit each provide a generic
+algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
 
 
 \algorithmclass{Reconnect Cell}
                {Cell topology (single)} % Input
                {Cell connections (zero or more)} % Output
-               {None} % Overlap
+               {None} % Interdependence
                {Extract Cells by Region, Extract Selection, Threshold,
                  Triangulate}
 
 \noindent
-Description.
+There are several apparent patterns in algorithms that build a topological
+structure, the first of which is \algclass{Reconnect Cell}. The
+characteristics of these algorithms are that the output topology uses the
+same points as (or a subset of the points from) the input topology and that
+each output cell depends on exactly one input cell. In essence the
+connectivity of each cell is being redefined.
 
-Some would benefit from subsetting points. Ours explicitly does this, EAVL
-uses selection maps to point back to original data.
+Because each thread creates an independent list of cell connections,
+\algclass{Reconnect Cell} algorithms have no interdependence. This makes
+them very similar to \algclass{Map by Cell} algorithms with the important
+exception that most \algclass{Reconnect Cell} algorithms have a variable
+number of outputs across the threads that is not known at the onset of
+execution. Thus, these algorithms must implement some form of
+\keyterm{stream compaction} to build efficient packed arrays for the
+output. Also, since some of these algorithms only use a subset of the input
+points, it may be desirable to explicitly identify and extract these
+points.
+
+Each of three SDAV many-core frameworks for visualization\lcite{Sewell2012}
+provides an example of \alg{Threshold}, a \algclass{Reconnect Cell}
+algorithm, using a different approach. PISTON uses a stream compaction
+algorithm to determine an efficient output layout and then generates the
+output cells in parallel\lcite{PISTON}. New points are created in the
+output, which implicitly removes points from the input at the expense of
+replicating points in the output. Dax uses a similar stream compaction but
+outputs a more compact array of connection
+identifiers\lcite{Maynard2013}. Dax can also optionally extract the subset
+of points used in the output at an added computational expense. EAVL
+provides a different approach wherein the output data structure references
+the input structure and the data management makes this behave as an
+independent data structure\lcite{Meredith2012}. This approach is much
+faster and memory efficient, but there is no explicit representation of the
+result for use in other packages that might expect that and it is not
+possible to remove the input structure from memory as long as the output
+still references it.
 
 
 \algorithmclass{Build Independent Topology}
                {Cell topology (single)} % Input
-               {Cell topology (known constant number)} % Output
-               {None} % Overlap
+               {Cell topology (constant number)} % Output
+               {None} % Interdependence
                {Glyph, Shrink, Tube}
 
 \noindent
@@ -294,7 +388,7 @@ Description.
 \algorithmclass{Build Connected Topology}
                {Cell topology (single)} % Input
                {Cell topology (zero or more)} % Output
-               {Duplicate constituent elements of output} % Overlap
+               {Duplicate constituent elements of output} % Interdependence
                {Clean, Clip, Contour, Extrusion, Isovolume, Slice, Subdivision}
 
 \noindent
@@ -304,7 +398,7 @@ Description.
 \algorithmclass{Capture Cell Adjacencies}
                {Constituent element (single) with incident cells (varies)} % Input
                {Field or cell connections for constituent element (single)} % Output
-               {Duplicate constituent elements of input} % Overlap
+               {Duplicate constituent elements of input} % Interdependence
                {Curvature, Cell Data to Point Data, Extract Edges, Extract
                  Surface (external faces), Feature Edges, Gradient
                  Estimation, Normal Generation}
@@ -316,7 +410,7 @@ Description.
 \algorithmclass{Globally Reduce}
                {Varies} % Input
                {Aggregated value (single)} % Output
-               {Global reduction on intermediate values} % Overlap
+               {Global reduction on intermediate values} % Interdependence
                {Histogram, Integrate, Outline, Statistics}
 
 \noindent
@@ -326,7 +420,7 @@ Description.
 \algorithmclass{Probe Data}
                {Searchable structure, Point location (single)} % Input
                {Varies} % Output
-               {None} % Overlap
+               {None} % Interdependence
                {Probe Location, Quadric Clustring, Resample with Dataset,
                  Streamlines, Streaklines}
 
