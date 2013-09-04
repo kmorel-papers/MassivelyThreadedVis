@@ -91,7 +91,7 @@
 
 \newcommand{\algorithmclass}[5]{
   \algorithmclasssection{#1} %
-  \vspace{-.5\baselineskip}
+  \vspace{-.4\baselineskip}
   \begin{description}[leftmargin=9em,style=nextline,noitemsep]
     \raggedright
   \item[Input] #2
@@ -144,7 +144,11 @@ Leadership Computing Facility. The previous Jaguar-XT5 system had a peak
 performance of about 2 petaflops using about 200 thousand concurrent
 processes. The current Titan-XK7 system, which incoporates GPU
 accelerators, has a peak performance of over 20 petaflops but can require
-70 to 500 \emph{million} concurrent threads in order to achieve that.
+70 to 500 \emph{million} concurrent threads in order to achieve
+that. Building algorithms that are implemented for new process
+architectures and programming models and that support the massive
+parallelization they require is considered one of the top research
+challenges for scientific visualization\lcite{Childs2013}.
 
 Production visualization products today achieve parallel scalability using
 a data parallel method that relies on partitioning the data into
@@ -216,7 +220,7 @@ threads. Thus, it is often more practical to determine partitioning by
 mapping from input to output rather than output to input.
 
 The second problem is that although plenty of algorithms are result
-invariant in that different partitioning results in \emph{equivalent}, the
+invariant in that different partitioning results are \emph{equivalent}, the
 structures they build are not strictly \emph{isomorphic}. Partitioning data
 often results in duplicate information on domain boundaries. \fix{Add
   figure and description demonstrating duplicated points when slice is
@@ -382,7 +386,25 @@ still references it.
                {Glyph, Shrink, Tube}
 
 \noindent
-Description.
+Algorithms that \algclass{Build Independent Topology} create new geometry
+requiring both new points and new cells that connect these points. The
+geometry created by each thread in this algorithm class is completely
+independent from that created in any other thread; there are no topological
+connections between them.
+
+For example, consider the \alg{Glyph} filter. Each thread in this filter
+produces a small 3D object, like a scaled sphere or oriented arrow,
+centered at the point assigned to the thread. Each 3D object is completely
+disconnected (topologically) from its bretheren and thus can be created
+independently and concurrently.
+
+The behavioral characteristics of the \algclass{Build Independent Topology}
+algorithms are very similar to the \algclass{Basic Mapping} and
+\algclass{Map by Cell} algorithms. The only meaningful difference between
+them is the interpretation of the output data. Instead of producing a
+single or set of field values, \algclass{Build Independent Topology}
+algorithms produce topologies of cells, vertices, and point coordinates;
+these data must be interpreted and managed as such.
 
 
 \algorithmclass{Build Connected Topology}
@@ -392,7 +414,39 @@ Description.
                {Clean, Clip, Contour, Extrusion, Isovolume, Slice, Subdivision}
 
 \noindent
-Description.
+The most technically complicated class of algorithms we find that generate
+geometry are those that \algclass{Build Connected Topology}. These
+algorithms create new geometry requiring both new points and new cells
+that connect these points. Of the points created by each thread many or all
+of them may be coincident with points created by another thread. These
+coincident points represent connections across elements created by
+different threads; capturing these connections creates an interdependence
+across threads.
+
+The easiest solution to this problem is to simply ignore it by letting
+coincident points exist and losing the topological connections. Thus, the
+output of the algorithm is topologically a set of disconnected cells, often
+referred to as a \keyterm{soup}. We find this approach common, particularly
+in implementations of \alg{Contour} for GPUs\fix{cite,cite,cite}.
+
+Producing a soup of cells may be an acceptable solution in some situations,
+particularly if the result is to be rendered and then forgotten, but can
+also be a problematic solution. The first problem is that this redundancy
+causes an inflation of the memory required. The second problem is that
+subsequent algorithms, such as estimating smooth normals on a contour,
+might require the lost topological connections. Existing tools,
+particularly those built on VTK\lcite{VTK}, expect chains of algorithms of
+this nature to work.
+
+A typical approach to finding coincident points in a serial algorithm is to
+use an iterative \keyterm{locator} structure to find any coincident points
+that are already created\lcite{VTKUsersGuide}. However, this approach is
+unlikely to work in a massively threaded environment as constant updates to
+the locator will require far too much synchronization. Bell\scite{Bell2010}
+informally proposes a \keyterm{vertex welding} algorithm that can
+efficently find these coincident points on massive threading after the
+fact, but a solution working more closely to the algorithm might have
+better results.
 
 
 \algorithmclass{Capture Cell Adjacencies}
@@ -404,7 +458,36 @@ Description.
                  Estimation, Normal Generation}
 
 \noindent
-Description.
+The previously listed algorithms all operate on a single point in the mesh
+or on a single cell and its incident features. These data are quickly
+locatable in general data structures. However, some algorithms need to
+\algclass{Capture Cell Adjacencies}. They typically operate by considering
+the points, edges, or faces in the mesh and examining the cells incident to
+them.
+
+In some types of data, particularly structured data with implicit
+topologies, enumerating the mesh elements and finding incident cells is
+trivial. However, in unstructured data represented by cell connection
+lists, this information is not explicitly stored. Thus, although the
+computation of \algclass{Capture Cell Adjacencies} algorithms are
+completely independent, they might require a collective operation to
+identify the domain of the input each thread needs.
+
+Serial VTK algorithms support cell adjacencies by building a
+\keyterm{links} array that lists which cells each point is incident on. A
+similar array could be used in a massively threaded environment, but since
+a links array is not always available we first need an efficient massively
+threaded algorithm to build one.
+
+An alternate approach is to use a different cell representation that does
+explicitly capture these incidence relationships. Such alternate
+representations include half-edge structures\lcite{Kettner1998}, cellular
+data structures\lcite{Alumbaugh2005}, and circular incident edge
+lists\lcite{Levy2001}. The drawback to these linked representations is that
+storing links to every desired incidence relationship is costly. Also, most
+existing data representations, including CGNS\lcite{CGNS}, VTK\lcite{VTK},
+and XDMF to name a few, use cell connection lists, so a links array would
+likely need to be built to convert between the representations anyway.
 
 
 \algorithmclass{Globally Reduce}
