@@ -115,7 +115,7 @@
 As the number of cores in processors increase and accelerator architectures
 are becoming more common, an ever greater number of threads is required to
 achieve full processor utilization. Our current parallel scientific
-visualization codes rely on a partitioning of data to achieve parallel
+visualization codes rely on partitioning data to achieve parallel
 processing, but this approach will not scale as we approach massive
 threading in which work is distributed in such a fine level that each
 thread is responsible for a minute portion of data. In this paper we
@@ -123,7 +123,7 @@ characterize the challenges of refactoring our current visualization
 algorithms by considering the finest portion of work each performs and
 examining the domain of input data, overlaps of output domains, and
 interdependencies among work instances. We divide our visualization
-algorithms into eight categories sharing the same type of
+algorithms into eight categories, each containing algorithms with the same
 interdependencies. By focusing our research efforts to solving these
 categorial challenges rather than this legion of individual algorithms, we
 can make attainable advancement for extreme computing.
@@ -139,7 +139,7 @@ capability\lcite{Sutter2005}. Recent CPUs feature multiple cores and
 hyperthreading technology to allow each core to run concurrent
 threads. Furthermore, accelerator type architectures, which have
 lightweight cores grouped to share control, are becoming increasingly
-popular for their high price and power to performance ratios.
+popular for their high ratios of price and power to performance.
 
 High performance computing is also seeing a remarkable increase in the
 parallelism required on large-scale systems. Consider, for example, the
@@ -162,7 +162,7 @@ domain boundaries so that the interaction of work on parallel processes can
 be ignored. However, this approach is infeasible when dealing with massive
 amounts of threads on these emerging architectures. We now need to design
 new algorithms with a key on data interdependencies to process efficiently
-in these massively threaded environment.
+in a massively threaded environment.
 
 Unfortunately, to perform scientific visualization with massive threading,
 we need to redesign our algorithms to work effectively with fine-grained,
@@ -172,7 +172,7 @@ and accelerator types of architectures\fix{cite,cite,cite}, but all these
 projects focus on the implementation of a single or select fixed set of
 algorithms. Our goal in this paper is to present commonalities among
 various algorithms that share parallel-programming challenges. By
-addressing this higher level challenges, we can make better progress to
+addressing these higher level challenges, we can make better progress to
 ensure that our scalable scientific visualization needs are met.
 
 To identify these high level parallel-programming challenges, we first
@@ -199,7 +199,7 @@ correctly.
   independent domains.
 \item[Mappable Input] Given an identification for a portion of the output,
   the input domain responsible for this output can be determined. The
-  output portion can, and often is, identified as simple piece $i$ of $N$.
+  output portion can, and often is, identified as simply piece $i$ of $N$.
 \item[Result Invariant] The output of the algorithm is equivalent across
   all possible partitioning.
 \end{description}
@@ -211,11 +211,11 @@ the data is partitioned (potentially) down to domains of single elements.
 
 The first problem is that many algorithms do not really have a clear
 mapping from an algorithm's output to its input. For example, when
-computing a contour\lcite{Lorensen1987}, it is seldom practical to know a
-priori how large the output will be, from what domain of the input each
-piece of the output will originate, and what the distribution of elements
-in the output partitions will be. As long as the data partitioning is
-coarse enough, managing uneven or even empty domains is
+computing a contour\lcite{Lorensen1987}, it is seldom practical \emph{a
+  priori} to know how large the output will be, to know from what domain of
+the input each piece of the output will originate, and to know what the
+distribution of elements in the output partitions will be. As long as the
+data partitioning is coarse enough, managing uneven or empty domains is
 inconsequential. Load imbalance in downstream processing can either be
 resolved by dynamic rebalancing or, more commonly, simply tolerating
 it. However, to achieve efficiency with massive threading, it is important
@@ -274,7 +274,7 @@ it. Assuming that many threads are simultaneously producing output, we also
 identify the \keyterm{interdependence} among these threads.
 
 From this information we derive classes of scientific visualization
-algorithms, where the algorithms of each class share the same input,
+algorithms where the algorithms of each class share the same input,
 output, and interdependence characteristics. This classification is
 constructive because once we resolve the challenges of mapping input to
 output and managing interdependence with collective operations, the
@@ -286,7 +286,7 @@ serial counterparts.
                {Field element (single)} % Output
                {None} % Interdependence
                {Append Attributes, Append Datasets/Geometry, Calculator,
-                 Elevation, Generate Ids Reflect, Transform, Warp}
+                 Elevation, Generate Ids, Reflect, Transform, Warp}
 
 \noindent
 The \algclass{Basic Mapping} algorithms operate on an array of field values
@@ -327,8 +327,8 @@ fields.
 
 Operations of this class involve characterizing the shape of the cell (as
 in the case of \alg{Cell Centers} and \alg{Mesh Quality}) or math
-operations that operation on a continuous function rather than discrete
-values (as is the case for \alg{Cell Derivatives}).
+operations over continuous function rather than discrete values (as is the
+case for \alg{Cell Derivatives}).
 
 Although parallel threads generally do access overlapped portions of the
 input data, the calculations computed by each thread are independent and
@@ -363,14 +363,14 @@ output. Also, since some of these algorithms only use a subset of the input
 points, it may be desirable to explicitly identify and extract these
 points.
 
-Each of three SDAV many-core frameworks for visualization\lcite{Sewell2012}
-provides an example of \alg{Threshold}, a \algclass{Reconnect Cell}
-algorithm, using a different approach. PISTON uses a stream compaction
-algorithm to determine an efficient output layout and then generates the
-output cells in parallel\lcite{PISTON}. New points are created in the
-output, which implicitly removes points from the input at the expense of
-replicating points in the output. Dax uses a similar stream compaction but
-outputs a more compact array of connection
+Each of the three SDAV many-core frameworks for
+visualization\lcite{Sewell2012} provides an example of \alg{Threshold}, a
+\algclass{Reconnect Cell} algorithm, using a different approach. PISTON
+uses a stream compaction algorithm to determine an efficient output layout
+and then generates the output cells in parallel\lcite{PISTON}. New points
+are created in the output, which implicitly removes points from the input
+at the expense of replicating points in the output. Dax uses a similar
+stream compaction but outputs a more compact array of connection
 identifiers\lcite{Maynard2013}. Dax can also optionally extract the subset
 of points used in the output at an added computational expense. EAVL
 provides a different approach wherein the output data structure references
@@ -413,18 +413,17 @@ these data must be interpreted and managed as such.
 \algorithmclass{Build Connected Topology}
                {Cell topology (single)} % Input
                {Cell topology (zero or more)} % Output
-               {Duplicate constituent elements of output} % Interdependence
+               {Duplicate output points} % Interdependence
                {Clean, Clip, Contour, Extrusion, Isovolume, Slice, Subdivision}
 
 \noindent
 The most technically complicated class of algorithms we find that generate
 geometry are those that \algclass{Build Connected Topology}. These
-algorithms create new geometry requiring both new points and new cells
-that connect these points. Of the points created by each thread many or all
-of them may be coincident with points created by another thread. These
-coincident points represent connections across elements created by
-different threads; capturing these connections creates an interdependence
-across threads.
+algorithms create new geometry requiring both new points and new cells that
+connect these points. The points created by each thread are coincident with
+points created by another thread. These coincident points represent
+connections across elements created by different threads; capturing these
+connections creates an interdependence across threads.
 
 The easiest solution to this problem is to simply ignore it by letting
 coincident points exist and losing the topological connections. Thus, the
@@ -477,10 +476,10 @@ completely independent, they might require a collective operation to
 identify the domain of the input each thread needs.
 
 Serial VTK algorithms support cell adjacencies by building a
-\keyterm{links} array that lists which cells each point is incident on. A
-similar array could be used in a massively threaded environment, but since
-a links array is not always available we first need an efficient massively
-threaded algorithm to build one.
+\keyterm{links} array that lists which cells each point is incident
+on\lcite{VTKUsersGuide}. A similar array could be used in a massively
+threaded environment, but since a links array is not always available, we
+first need an efficient massively threaded algorithm to build one.
 
 An alternate approach is to use a different cell representation that does
 explicitly capture these incidence relationships. Such alternate
@@ -496,7 +495,7 @@ likely need to be built to convert between the representations anyway.
 \algorithmclass{Globally Reduce}
                {Varies} % Input
                {Aggregated value (single)} % Output
-               {Global reduction on intermediate values} % Interdependence
+               {Reduction on intermediate values} % Interdependence
                {Histogram, Integrate, Outline, Statistics}
 
 \noindent
@@ -517,7 +516,7 @@ the distributed-memory interconnect.
 
 
 \algorithmclass{Query Data}
-               {Searchable structure, Point location (single)} % Input
+               {Searchable structure, Query key (single)} % Input
                {Varies} % Output
                {None} % Interdependence
                {Probe Location, Quadric Clustering, Resample with Dataset,
@@ -526,12 +525,12 @@ the distributed-memory interconnect.
 \noindent
 Most scientific visualization algorithms operate on a domain that is easily
 identifiable by the enumeration of the work (i.e. the point or cell
-identifier used to number threads). However some algorithms must
+identifier used to number threads). However, some algorithms must
 \algclass{Query Data} to find a region of interest. Typically this means
 finding a cell containing a given coordinate in space. This is part of the
-fundamental operation of such algorithms based on resampling and particle
-advection. However, this query can also be needed for a more general set of
-attributes when performing query-based
+fundamental operation of algorithms such as those based on resampling and
+particle advection. However, this query can also be needed for a more
+general set of attributes when performing query-based
 visualization\lcite{Glatter2008,Gosink2008,Johnson2009,Rubel2008}.
 
 Some queries, such as a spatial query on a uniform rectilinear grid, are
@@ -552,21 +551,20 @@ left out of this list for a variety of reasons, which we capture here.
 
 A very small number of algorithms have complicated interaction that appears
 to be unique to the nature of the operation. In particular, ParaView has
-two algorithms, each with minor variations, with complicated interaction
-that does not follow one of the previous patterns. The \alg{Connectivity}
-algorithms need to traverse large neighborhood regions to find connected
-components. The \alg{Delaunay} algorithms need to find all circles or
-spheres containing exactly 3 or 4 points, respectively. Fortunately, there
-are few algorithms with unique thread interaction, so addressing these
-independently is much more tractable than reimplementing every algorithm in
-existence today.
+two algorithms with complicated interaction that does not follow one of the
+previous patterns. The \alg{Connectivity} algorithm needs to traverse large
+neighborhood regions to find connected components. The \alg{Delaunay}
+algorithm needs to find all circles or spheres containing exactly 3 or 4
+points, respectively. Fortunately, there are few algorithms with unique
+thread interaction, so addressing these independently is much more
+tractable than reimplementing every algorithm in existence today.
 
 We have left out one or more classes involving imaging algorithms. These
 include algorithms involving kernel convolutions and \alg{FFT}. Although
 this is generally an important class of algorithms, it is not one that is
 extensively used by ParaView users. The field of imaging algorithms is very
 broad and of interest across many disciplines. It deserves its own study,
-and thus we consider out of the scope of this paper.
+and thus we consider it out of the scope of this paper.
 
 Another algorithm we have left out is \alg{Extract Subset}, which extracts
 a region of interest and optionally regularly subsamples structured
@@ -578,23 +576,23 @@ There are several algorithms in ParaView that do not translate to running
 on massive threads. Some of these algorithms do trivial metadata
 manipulations like extracting a block from an assembly. Other algorithms
 perform ordinary operations while making temporal
-adjustments\lcite{Biddiscombe2007} or other pipeline execution management
-features\lcite{Moreland2013:TVCG}. Also, although the \alg{Distributed Data
-  Decomposition} (\alg{D3}) algorithm can be compute intensive, the data
-partitioning it does makes little sense on the fine level dictated by
-massive threading.
+adjustments\lcite{Biddiscombe2007} or other changes to pipeline execution
+management\lcite{Moreland2013:TVCG}. Also, although the \alg{Distributed
+  Data Decomposition} (\alg{D3}) algorithm can be compute intensive, its
+data partitioning makes little sense on the fine level dictated by massive
+threading.
 
 Finally, to avoid being overly pedantic, we omit several algorithms that
-variations of algorithms listed or specialized combinations of algorithms
-listed. For example, ParaView contains seven different versions of
-\alg{Generate Ids} where each extracts information from different
+are variations of algorithms listed or specialized combinations of
+algorithms listed. For example, ParaView contains seven different versions
+of \alg{Generate Ids} where each extracts information from different
 enumerations. ParaView also has four different versions of \alg{Slice},
 which have some optimizations for different data structures. There are also
 some algorithms specialized for a particular domain such as \alg{Halo
   Finder} and several versions of \alg{Material Interface} that are simply
 a conglomeration of other algorithms listed here. \fix{Should verify that
-  to be the case.} It would be unnecessarily
-distracting to enumerate each of these variations.
+  to be the case.} It would be unnecessarily distracting to enumerate each
+of these variations.
 
 
 \section{Conclusion}
