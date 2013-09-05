@@ -146,7 +146,7 @@ parallelism required on large-scale systems. Consider, for example, the
 last two generations of leadership-class computers at the Oak Ridge
 Leadership Computing Facility. The previous Jaguar-XT5 system had a peak
 performance of about 2 petaflops using about 200 thousand concurrent
-processes. The current Titan-XK7 system, which incoporates GPU
+processes. The current Titan-XK7 system, which incorporates GPU
 accelerators, has a peak performance of over 20 petaflops but can require
 70 to 500 \emph{million} concurrent threads in order to achieve
 that. Building algorithms that are implemented for new process
@@ -162,7 +162,7 @@ domain boundaries so that the interaction of work on parallel processes can
 be ignored. However, this approach is infeasible when dealing with massive
 amounts of threads on these emerging architectures. We now need to design
 new algorithms with a key on data interdependencies to process efficiently
-in these massively multithreaded environment.
+in these massively threaded environment.
 
 Unfortunately, to perform scientific visualization with massive threading,
 we need to redesign our algorithms to work effectively with fine-grained,
@@ -218,7 +218,7 @@ in the output partitions will be. As long as the data partitioning is
 coarse enough, managing uneven or even empty domains is
 inconsequential. Load imbalance in downstream processing can either be
 resolved by dynamic rebalancing or, more commonly, simply tolerating
-it. However, to achieve efficency with massive threading, it is important
+it. However, to achieve efficiency with massive threading, it is important
 to know the precise elements on which to schedule the working
 threads. Thus, it is often more practical to determine partitioning by
 mapping from input to output rather than output to input.
@@ -248,7 +248,7 @@ threading.
 \begin{description}
 \item[Data Separability] The data can be broken down to an elemental level
   fine enough to provide independent work for sufficient threads.
-\item[Discoverable Input Mapping] The existance of output elements can be
+\item[Discoverable Input Mapping] The existence of output elements can be
   efficiently determined from the input.
 \item[Collective Work] In the cases where work is not independent, the
   overlap of responsibility can be resolved through efficient collective
@@ -297,12 +297,12 @@ there is more than one input array).
 The typical purpose of this type of algorithm is to generate a derived
 field of data. Some of these operate on the coordinates of mesh points, for
 example the \alg{Transform} filter moves and warps the data with an affine
-transformation. However, when point coodinates are treated as a field, the
+transformation. However, when point coordinates are treated as a field, the
 behavior characteristics are the same.
 
 The \algclass{Basic Mapping} class is essentially just a parallel
 \texttt{for} operation over input and output field arrays. As such, basic
-mapping is essentally built in to many multi- and many-core languages and
+mapping is essentially built in to many multi- and many-core languages and
 APIs including OpenMP (parallel for pragma\lcite{Quinn2004}), CUDA (triple
 chevron notation\lcite{Sanders2011}), Thrust (for\_each generic
 algorithm\lcite{Thrust}), and Intel Threading Building Blocks
@@ -315,7 +315,7 @@ to simplify porting using a generic programming interface over them.
                {Cell topology (single)} % Input
                {Field element (single)} % Output
                {None} % Interdependence
-               {Cell Centers, Point Data to Cell Data, Cell Derivitives,
+               {Cell Centers, Point Data to Cell Data, Cell Derivatives,
                  Mesh Quality}
 
 \noindent
@@ -328,7 +328,7 @@ fields.
 Operations of this class involve characterizing the shape of the cell (as
 in the case of \alg{Cell Centers} and \alg{Mesh Quality}) or math
 operations that operation on a continuous function rather than discrete
-values (as is the case for \alg{Cell Derivitives}).
+values (as is the case for \alg{Cell Derivatives}).
 
 Although parallel threads generally do access overlapped portions of the
 input data, the calculations computed by each thread are independent and
@@ -398,7 +398,7 @@ connections between them.
 For example, consider the \alg{Glyph} filter. Each thread in this filter
 produces a small 3D object, like a scaled sphere or oriented arrow,
 centered at the point assigned to the thread. Each 3D object is completely
-disconnected (topologically) from its bretheren and thus can be created
+disconnected (topologically) from its brethren and thus can be created
 independently and concurrently.
 
 The behavioral characteristics of the \algclass{Build Independent Topology}
@@ -447,7 +447,7 @@ that are already created\lcite{VTKUsersGuide}. However, this approach is
 unlikely to work in a massively threaded environment as constant updates to
 the locator will require far too much synchronization. Bell\scite{Bell2010}
 informally proposes a \keyterm{vertex welding} algorithm that can
-efficently find these coincident points on massive threading after the
+efficiently find these coincident points on massive threading after the
 fact, but a solution working more closely to the algorithm might have
 better results.
 
@@ -500,7 +500,7 @@ likely need to be built to convert between the representations anyway.
                {Histogram, Integrate, Outline, Statistics}
 
 \noindent
-Some scientific visualization algorithms perform an aggrication on the
+Some scientific visualization algorithms perform an aggregation on the
 data, often performing an operation like sum or average on a field or
 derived field in the data. Thus, these algorithms \algclass{Globally
   Reduce} data into a single value or small set of values.
@@ -520,7 +520,7 @@ the distributed-memory interconnect.
                {Searchable structure, Point location (single)} % Input
                {Varies} % Output
                {None} % Interdependence
-               {Probe Location, Quadric Clustring, Resample with Dataset,
+               {Probe Location, Quadric Clustering, Resample with Dataset,
                  Streamlines, Streaklines}
 
 \noindent
@@ -579,14 +579,14 @@ on massive threads. Some of these algorithms do trivial metadata
 manipulations like extracting a block from an assembly. Other algorithms
 perform ordinary operations while making temporal
 adjustments\lcite{Biddiscombe2007} or other pipeline execution management
-features\lcite{Moreland2013:TVCG}. Also, although the \alg{Distrbuted Data
+features\lcite{Moreland2013:TVCG}. Also, although the \alg{Distributed Data
   Decomposition} (\alg{D3}) algorithm can be compute intensive, the data
 partitioning it does makes little sense on the fine level dictated by
 massive threading.
 
 Finally, to avoid being overly pedantic, we omit several algorithms that
 variations of algorithms listed or specialized combinations of algorithms
-listed. For example, ParaView contains seven diffent versions of
+listed. For example, ParaView contains seven different versions of
 \alg{Generate Ids} where each extracts information from different
 enumerations. ParaView also has four different versions of \alg{Slice},
 which have some optimizations for different data structures. There are also
@@ -611,13 +611,13 @@ independently address all of these needs.
 
 The development of our current petascale visualization tools is made
 possible by observations that allow us to design a general parallel
-capability that is then shared among many visualization catagories. If we
+capability that is then shared among many visualization categories. If we
 cannot find a similar way to localize and reuse the parallel portion of our
 algorithms, we cannot succeed in supporting the next generation of parallel
 computing.
 
-In this paper we have identified eight catagories of shared features among
-these algorithms. By addressing the group of algorithms in each catagory as
+In this paper we have identified eight categories of shared features among
+these algorithms. By addressing the group of algorithms in each category as
 one, we can quickly achieve our goal of supporting extreme scale computing.
 
 \fix{Perhaps a weak conclusion. Maybe a coauthor will embellish :)}
