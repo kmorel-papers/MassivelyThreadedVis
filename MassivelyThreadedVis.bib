@@ -2,12 +2,52 @@
 %% http://bibdesk.sourceforge.net/
 
 
-%% Created for kmorel at 2013-09-05 14:38:36 -0600 
+%% Created for kmorel at 2013-09-05 17:10:38 -0600 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
+
+@inproceedings{Klein2004,
+	Abstract = {Volume visualization using isosurface extraction is a well-researched topic. Research demonstrated that even for unstructured grids peak performances of millions of tetrahedra per second can be achieved by exploiting the parallel processing capabilities of modern GPUs. In this paper we present a hardware-accelerated solution that further improves the extraction performance. In contrary to existing approaches, our technique explicitly extracts the isosurface geometry in a fragment program by rendering only a single screen-sized quadrilateral. The extracted geometry is directly written to an on-board graphics memory object allowing for direct rendering without further bus transfers. Additionally, the geometry can be manipulated by shader programs or read back to the application for further processing. Examples and application scenarios are given that can benefit from our approach.},
+	Annote = {An early GPU algorithm for marching tetrahdra contours. Uses texture bufers for input and output.},
+	Author = {Thomas Klein and Simon Stegmaier and Thomas Ertl},
+	Booktitle = {Proceedings of the 12th Pacific Conference on Computer Graphics and Applications (PG'04)},
+	Date-Added = {2013-09-05 23:09:04 +0000},
+	Date-Modified = {2013-09-05 23:09:04 +0000},
+	Month = {October},
+	Note = {{DOI}~10.1109/PCCGA.2004.1348349},
+	Pages = {186--195},
+	Title = {Hardware-accelerated Reconstruction of Polygonal Isosurface Representations on Unstructured Grids},
+	Year = {2004},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1109/PCCGA.2004.1348349}}
+
+@inproceedings{Pascucci2004,
+	Abstract = {This paper presents a simple approach for rendering isosurfaces of a scalar field. Using the vertex programming capability of commodity graphics cards, we transfer the cost of computing an isosurface from the Central Processing Unit (CPU), running the main application, to the Graphics Processing Unit (GPU), rendering the images. We consider a tetrahedral decomposition of the domain and draw one quadrangle (quad) primitive per tetrahedron. A vertex program transforms the quad into the piece of isosurface within the tetrahedron (see Figure 2). In this way, the main application is only devoted to streaming the vertices of the tetrahedra from main memory to the graphics card. For adaptively refined rectilinear grids, the optimization of this streaming process leads to the definition of a new 3D space-filling curve, which generalizes the 2D Sierpinski curve used for efficient rendering of triangulated terrains. We maintain the simplicity of the scheme when constructing view-dependent adaptive refinements of the domain mesh. In particular, we guarantee the absence of T-junctions by satisfying local bounds in our nested error basis. The expensive stage of fixing cracks in the mesh is completely avoided. We discuss practical tradeoffs in the distribution of the workload between the application and the graphics hardware. With current GPU's it is convenient to perform certain computations on the main CPU. Beyond the performance considerations that will change with the new generations of GPU's this approach has the major advantage of avoiding completely the storage in memory of the isosurface vertices and triangles.},
+	Annote = {An early GPGPU paper for doing marching tetrahedra contours using vertex shaders. The approach is similar to our GATOR paper.},
+	Author = {V. Pascucci},
+	Booktitle = {Proceedings of the Sixth Joint Eurographics - IEEE TCVG conference on Visualization},
+	Date-Added = {2013-09-05 23:02:09 +0000},
+	Date-Modified = {2013-09-05 23:02:09 +0000},
+	Pages = {293--300},
+	Title = {Isosurface Computation Made Simple: Hardware Acceleration, Adaptive Refinement and Tetrahedral Stripping},
+	Year = {2004}}
+
+@article{Dyken2008,
+	Abstract = {We present an implementation approach for Marching Cubes (MC) on graphics hardware for OpenGL 2.0 or comparable graphics APIs. It currently outperforms all other known graphics processing units (GPU)-based iso-surface extraction algorithms in direct rendering for sparse or large volumes, even those using the recently introduced geometry shader (GS) capabilites. To achieve this, we outfit the Histogram Pyramid (HP) algorithm, previously only used in GPU data compaction, with the capability for arbitrary data expansion. After reformulation of MC as a data compaction and expansion process, the HP algorithm becomes the core of a highly efficient and interactive MC implementation. For graphics hardware lacking GSs, such as mobile GPUs, the concept of HP data expansion is easily generalized, opening new application domains in mobile visual computing. Further, to serve recent developments, we present how the HP can be implemented in the parallel programming language CUDA (compute unified device architecture), by using a novel 1D chunk/layer construction.},
+	Annote = {A marching cubes implementation on the GPU.  Threads are scheduled such that each thread is responsible for the output of one polygon.  Uses an object called a HistoPyramid to find the input cell containing the appropriate polygon.  The HistoPyramid is basically a full octree where the value of each node contains the number of polygons to be generated for that region.},
+	Author = {Christopher Dyken and Gernot Ziegler and Christian Theobalt and Hans-Peter Seidel},
+	Date-Added = {2013-09-05 22:47:39 +0000},
+	Date-Modified = {2013-09-05 22:47:39 +0000},
+	Journal = {Computer Graphics Forum},
+	Note = {{DOI}~10.1111/j.1467-8659.2008.01182.x},
+	Number = {8},
+	Pages = {2028--2039},
+	Title = {High-speed Marching Cubes using {HistoPyramids}},
+	Volume = {27},
+	Year = {2008},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1111/j.1467-8659.2008.01182.x}}
 
 @article{Moreland2013:TVCG,
 	Abstract = {The most common abstraction used by visualization libraries and applications today is what is known as the visualization pipeline. The visualization pipeline provides a mechanism to encapsulate algorithms and then couple them together in a variety of ways. The visualization pipeline has been in existence for over twenty years, and over this time many variations and improvements have been proposed. This paper provides a literature review of the most prevalent features of visualization pipelines and some of the most recent research directions.},

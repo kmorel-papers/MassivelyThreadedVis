@@ -168,9 +168,10 @@ Unfortunately, to perform scientific visualization with massive threading,
 we need to redesign our algorithms to work effectively with fine-grained,
 independent operations. There has already been significant work in making
 scientific visualization algorithms work well with shared memory threading
-and accelerator types of architectures\fix{cite,cite,cite}, but all these
-projects focus on the implementation of a single or select fixed set of
-algorithms. Our goal in this paper is to present commonalities among
+and accelerator types of
+architectures\lcite{PISTON,Dyken2008,Maynard2013,EAVL,Meredith2012}, but
+all these projects focus on the implementation of a single or select fixed
+set of algorithms. Our goal in this paper is to present commonalities among
 various algorithms that share parallel-programming challenges. By
 addressing these higher level challenges, we can make better progress to
 ensure that our scalable scientific visualization needs are met.
@@ -429,7 +430,8 @@ The easiest solution to this problem is to simply ignore it by letting
 coincident points exist and losing the topological connections. Thus, the
 output of the algorithm is topologically a set of disconnected cells, often
 referred to as a \keyterm{soup}. We find this approach common, particularly
-in implementations of \alg{Contour} for GPUs\fix{cite,cite,cite}.
+in implementations of \alg{Contour} for
+GPUs\lcite{PISTON,Dyken2008,Pascucci2004,Klein2004}.
 
 Producing a soup of cells may be an acceptable solution in some situations,
 particularly if the result is to be rendered and then forgotten, but can
