@@ -86,12 +86,13 @@
 \newcommand{\algclass}[1]{\textsf{#1}}
 \newcommand{\alg}[1]{#1}
 
-\newcommand{\algorithmclasssection}[1]{
-  \vspace{\baselineskip}\noindent{\large\textbf{\algclass{#1}}}}
+%% \newcommand{\algorithmclasssection}[1]{
+%%   \vspace{\baselineskip}\noindent{\large\textbf{\algclass{#1}}}}
+\newcommand{\algorithmclasssection}[1]{\subsection*{#1}}
 
 \newcommand{\algorithmclass}[5]{
   \algorithmclasssection{#1} %
-  \vspace{-.4\baselineskip}
+  %\vspace{-.4\baselineskip}
   \begin{description}[leftmargin=9em,style=nextline,noitemsep]
     \raggedright
   \item[Input] #2
@@ -121,8 +122,11 @@ thread is responsible for a minute portion of data. In this paper we
 characterize the challenges of refactoring our current visualization
 algorithms by considering the finest portion of work each performs and
 examining the domain of input data, overlaps of output domains, and
-interdependencies among work instances. \fix{Some further sentence about
-  number of classes and how it will help focus research.}
+interdependencies among work instances. We divide our visualization
+algorithms into eight categories sharing the same type of
+interdependencies. By focusing our research efforts to solving these
+categorial challenges rather than this legion of individual algorithms, we
+can make attainable advancement for extreme computing.
 
 \end{abstract}
 
@@ -282,8 +286,7 @@ serial counterparts.
                {Field element (single)} % Output
                {None} % Interdependence
                {Append Attributes, Append Datasets/Geometry, Calculator,
-                 Elevation, Generate Ids, Process Ids, Reflect, Transform,
-                 Warp}
+                 Elevation, Generate Ids Reflect, Transform, Warp}
 
 \noindent
 The \algclass{Basic Mapping} algorithms operate on an array of field values
@@ -338,8 +341,8 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
                {Cell topology (single)} % Input
                {Cell connections (zero or more)} % Output
                {None} % Interdependence
-               {Extract Cells by Region, Extract Selection, Threshold,
-                 Triangulate}
+               {Extract Cells by Region, Extract Selection, Mask Points,
+                 Threshold, Triangulate}
 
 \noindent
 There are several apparent patterns in algorithms that build a topological
@@ -542,14 +545,55 @@ purposes of scientific visualization.
 
 \algorithmclasssection{Remaining Algorithms}
 
-Extract Subset (from structured data)
+\noindent
+The previous classification of algorithms contains the majority of
+algorithms in the ParaView application. There are some algorithms we have
+left out of this list for a variety of reasons, which we capture here.
 
-Image based algorithms: kernel convolutions (gradient) and FFT.
+A very small number of algorithms have complicated interaction that appears
+to be unique to the nature of the operation. In particular, ParaView has
+two algorithms, each with minor variations, with complicated interaction
+that does not follow one of the previous patterns. The \alg{Connectivity}
+algorithms need to traverse large neighborhood regions to find connected
+components. The \alg{Delaunay} algorithms need to find all circles or
+spheres containing exactly 3 or 4 points, respectively. Fortunately, there
+are few algorithms with unique thread interaction, so addressing these
+independently is much more tractable than reimplementing every algorithm in
+existence today.
 
-D3
+We have left out one or more classes involving imaging algorithms. These
+include algorithms involving kernel convolutions and \alg{FFT}. Although
+this is generally an important class of algorithms, it is not one that is
+extensively used by ParaView users. The field of imaging algorithms is very
+broad and of interest across many disciplines. It deserves its own study,
+and thus we consider out of the scope of this paper.
 
-Connectivity
-Delaunay
+Another algorithm we have left out is \alg{Extract Subset}, which extracts
+a region of interest and optionally regularly subsamples structured
+data. The operation is similar to that of \algclass{Reconnect Cell} except
+that the basic implementation of copying subarrays is so simplistic we omit
+it.
+
+There are several algorithms in ParaView that do not translate to running
+on massive threads. Some of these algorithms do trivial metadata
+manipulations like extracting a block from an assembly. Other algorithms
+perform ordinary operations while making temporal
+adjustments\lcite{Biddiscombe2007} or other pipeline execution management
+features\lcite{Moreland2013:TVCG}. Also, although the \alg{Distrbuted Data
+  Decomposition} (\alg{D3}) algorithm can be compute intensive, the data
+partitioning it does makes little sense on the fine level dictated by
+massive threading.
+
+Finally, to avoid being overly pedantic, we omit several algorithms that
+variations of algorithms listed or specialized combinations of algorithms
+listed. For example, ParaView contains seven diffent versions of
+\alg{Generate Ids} where each extracts information from different
+enumerations. ParaView also has four different versions of \alg{Slice},
+which have some optimizations for different data structures. There are also
+some algorithms specialized for a particular domain such as \alg{Halo
+  Finder} and several versions of \alg{Material Interface} that are simply
+a conglomeration of other algorithms listed here. It would be unnecessarily
+distracting to enumerate each of these variations.
 
 
 \bibliographystyle{abbrv}
