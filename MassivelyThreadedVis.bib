@@ -2,12 +2,146 @@
 %% http://bibdesk.sourceforge.net/
 
 
-%% Created for kmorel at 2013-09-04 16:51:26 -0600 
+%% Created for kmorel at 2013-09-05 11:02:49 -0600 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
+
+@article{Zhou2008,
+	Abstract = {We present an algorithm for constructing kd-trees on GPUs. This algorithm achieves real-time performance by exploiting the GPU's streaming architecture at all stages of kd-tree construction. Unlike previous parallel kd-tree algorithms, our method builds tree nodes completely in BFS (breadth-first search) order. We also develop a special strategy for large nodes at upper tree levels so as to further exploit the fine-grained parallelism of GPUs. For these nodes, we parallelize the computation over all geometric primitives instead of nodes at each level. Finally, in order to maintain kd-tree quality, we introduce novel schemes for fast evaluation of node split costs.
+
+As far as we know, ours is the first real-time kd-tree algorithm on the GPU. The kd-trees built by our algorithm are of comparable quality as those constructed by off-line CPU algorithms. In terms of speed, our algorithm is significantly faster than well-optimized single-core CPU algorithms and competitive with multi-core CPU algorithms. Our algorithm provides a general way for handling dynamic scenes on the GPU. We demonstrate the potential of our algorithm in applications involving dynamic scenes, including GPU ray tracing, interactive photon mapping, and point cloud modeling.},
+	Annote = {Builds and uses a kd-tree on a GPU. The paper is very detailed and uses an algorithm more complicated than that, say, used by PISTON. The kd-tree is built using a surface area heuristic as the metric for making splits in the tree.},
+	Author = {Kun Zhou and Qiming Hou and Rui Wang and Baining Guo},
+	Date-Added = {2013-09-05 17:02:29 +0000},
+	Date-Modified = {2013-09-05 17:02:29 +0000},
+	Journal = {ACM Transactions on Graphics},
+	Month = {December},
+	Note = {{DOI}~10.1145/1409060.1409079},
+	Number = {5},
+	Title = {Real-Time KD-Tree Construction on Graphics Hardware},
+	Volume = {27},
+	Year = {2008},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1145/1409060.1409079}}
+
+@inproceedings{Foley2005,
+	Abstract = {Modern graphics hardware architectures excel at compute-intensive tasks such as ray-triangle intersection, making them attractive target platforms for raytracing. To date, most GPU-based raytracers have relied upon uniform grid acceleration structures. In contrast, the kd-tree has gained widespread use in CPU-based raytracers and is regarded as the best general-purpose acceleration structure. We demonstrate two kd-tree traversal algorithms suitable for GPU implementation and integrate them into a streaming raytracer. We show that for scenes with many objects at different scales, our kd-tree algorithms are up to 8 times faster than a uniform grid. In addition, we identify load balancing and input data recirculation as two fundamental sources of inefficiency when raytracing on current graphics hardware.},
+	Annote = {Describes a kd-tree search structure used on a GPU. The kd-tree still needs to be built on a CPU. The tree is traversed with what is known as a kd-restart algorithm.
+
+The kd-tree is used for ray casting.
+},
+	Author = {Tim Foley and Jeremy Sugerman},
+	Booktitle = {Proceedings of the ACM SIGGRAPH/EUROGRAPHICS Conference on Graphics Hardware (HWWS '05)},
+	Date-Added = {2013-09-05 16:57:54 +0000},
+	Date-Modified = {2013-09-05 16:57:54 +0000},
+	Note = {{DOI}~10.1145/1071866.1071869},
+	Pages = {15--22},
+	Title = {{KD}-Tree Acceleration Structures for a {GPU} Raytracer},
+	Year = {2005},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1145/1071866.1071869}}
+
+@article{Zhou2010,
+	Abstract = {We present the first parallel surface reconstruction algorithm that runs entirely on the GPU. Like existing implicit surface reconstruction methods, our algorithm first builds an octree for the given set of oriented points, then computes an implicit function over the space of the octree, and finally extracts an isosurface as a watertight triangle mesh. A key component of our algorithm is a novel technique for octree construction on the GPU. This technique builds octrees in real time and uses level-order traversals to exploit the fine-grained parallelism of the GPU. Moreover, the technique produces octrees that provide fast access to the neighborhood information of each octree node, which is critical for fast GPU surface reconstruction. With an octree so constructed, our GPU algorithm performs Poisson surface reconstruction, which produces high-quality surfaces through a global optimization. Given a set of 500 K points, our algorithm runs at the rate of about five frames per second, which is over two orders of magnitude faster than previous CPU algorithms. To demonstrate the potential of our algorithm, we propose a user-guided surface reconstruction technique which reduces the topological ambiguity and improves reconstruction results for imperfect scan data. We also show how to use our algorithm to perform on-the-fly conversion from dynamic point clouds to surfaces as well as to reconstruct fluid surfaces for real-time fluid simulation.},
+	Annote = {Describes an Octree spatial search structure that can be entirely build and used on a GPU. The Octree is built in a bottom-up fashion where primitives are placed in the most refined grid considered, and then spares areas of the grid are combined to implement the coarser levels of the tree.
+
+This Octree spatial search structure is used for reconstructing surfaces from point clouds.},
+	Author = {Kun Zhou and Minmin Gong and Xin Huang and Baining Guo},
+	Date-Added = {2013-09-05 16:35:49 +0000},
+	Date-Modified = {2013-09-05 16:35:49 +0000},
+	Journal = {IEEE Transactions on Visualization and Computer Graphics},
+	Month = {May},
+	Note = {{DOI}~10.1109/TVCG.2010.75},
+	Number = {5},
+	Pages = {669--681},
+	Title = {Data-Parallel Octrees for Surface Reconstruction},
+	Volume = {17},
+	Year = {2011},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1109/TVCG.2010.75}}
+
+@article{Kalojanov2011,
+	Abstract = {We investigate the use of two-level nested grids as acceleration structure for ray tracing of dynamic scenes. We propose a massively parallel, sort-based construction algorithm and show that the two-level grid is one of the structures that is fastest to construct on modern graphics processors. The structure handles non-uniform primitive distributions more robustly than the uniform grid and its traversal performance is comparable to those of other high quality acceleration structures used for dynamic scenes. We propose a cost model to determine the grid resolution and improve SIMD utilization during ray-triangle intersection by employing a hybrid packetization strategy. The build times and ray traversal acceleration provide overall rendering performance superior to previous approaches for real time rendering of animated scenes on GPUs.},
+	Annote = {An extension to [Kalojanov2009]. This also builds and uses a spatial search structure on GPUs. It is a two-level hiearchy of uniform grids. The first grid is a coarse partitioning of space. In each cell of this coarse partitioning a second level grid is created. The size of this grid is proportional to the number of primitives in that level.},
+	Author = {Javor Kalojanov and Markus Billeter and Philipp Slusallek},
+	Date-Added = {2013-09-05 16:24:22 +0000},
+	Date-Modified = {2013-09-05 16:24:22 +0000},
+	Journal = {Computer Graphics Forum},
+	Month = {April},
+	Note = {{DOI}~10.1111/j.1467-8659.2011.01862.x},
+	Number = {2},
+	Pages = {307--314},
+	Title = {Two-Level Grids for Ray Tracing on {GPU}s},
+	Volume = {30},
+	Year = {2011},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1111/j.1467-8659.2011.01862.x}}
+
+@inproceedings{Kalojanov2009,
+	Abstract = {We present a fast, parallel GPU algorithm for construction of uniform grids for ray tracing, which we implement in CUDA. The algorithm performance does not depend on the primitive distribution, because we reduce the problem to sorting pairs of primitives and cell indices. Our implementation is able to take full advantage of the parallel architecture of the GPU, and construction speed is faster than CPU algorithms running on multiple cores. Its scalability and robustness make it superior to alternative approaches, especially for scenes with complex primitive distributions.},
+	Annote = {A spatial search structure that it built and executed on a GPU. The search structure is a uniform grid that points to offsets in a list of triangles.
+
+The search structure was specifically designed for ray casting.},
+	Author = {Javor Kalojanov and Philipp Slusallek},
+	Booktitle = {Proceedings of the Conference on High Performance Graphics},
+	Date-Added = {2013-09-05 16:15:02 +0000},
+	Date-Modified = {2013-09-05 16:15:02 +0000},
+	Note = {{DOI}~10.1145/1572769.1572773},
+	Pages = {23--28},
+	Title = {A Parallel Algorithm for Construction of Uniform Grids},
+	Year = {2009},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1145/1572769.1572773}}
+
+@inproceedings{Rubel2008,
+	Annote = {Specifically uses VisIt for query-based visualization.},
+	Author = {Oliver {R\"{u}bel} and Prabhat and Kesheng Wu and Hank Childs and Jeremy Meredith and Cameron G.R. Geddes and Estelle Cormier-Michel and Sean Ahern and Gunther H. Weber and Peter Messmer and Hans Hagen and Bernd Hamann and E. Wes Bethel},
+	Booktitle = {Proceedings of the 2008 ACM/IEEE Conference on Supercomputing},
+	Date-Added = {2013-09-05 15:57:16 +0000},
+	Date-Modified = {2013-09-05 15:57:16 +0000},
+	Month = {November},
+	Title = {High Performance Multivariate Visual Data Exploration for Extremely Large Data},
+	Year = {2008}}
+
+@article{Gosink2008,
+	Annote = {Follow on to Stockinger2005 to extend to AMR data sets.},
+	Author = {Luke J. Gosink and John C. Anderson and E. Wes Bethel and Kenneth I. Joy},
+	Date-Added = {2013-09-05 15:56:50 +0000},
+	Date-Modified = {2013-09-05 15:56:50 +0000},
+	Journal = {IEEE Transactions on Visualization and Computer Graphics},
+	Month = {November/December},
+	Number = {6},
+	Pages = {1715--1722},
+	Title = {Query-Driven Visualization of Time-Varying Adaptive Mesh Refinement Data},
+	Volume = {14},
+	Year = {2008}}
+
+@article{Johnson2009,
+	Annote = {A predicate-based language for query-based visualization.},
+	Author = {C. Ryan Johnson and Jian Huang},
+	Date-Added = {2013-09-05 15:56:26 +0000},
+	Date-Modified = {2013-09-05 15:56:26 +0000},
+	Journal = {IEEE Transactions on Visualization and Computer Graphics},
+	Month = {September/October},
+	Note = {{DOI}~10.1109/TVCG.2009.25},
+	Number = {5},
+	Title = {Distribution-Driven Visualization of Volume Data},
+	Volume = {15},
+	Year = {2009},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1109/TVCG.2009.25}}
+
+@article{Glatter2008,
+	Annote = {An expression language for query-based visualization based on file globbing.},
+	Author = {Markus Glatter and Jian Huang and Sean Ahern and Jamison Daniel and Aidong Lu},
+	Date-Added = {2013-09-05 15:56:18 +0000},
+	Date-Modified = {2013-09-05 15:56:18 +0000},
+	Journal = {IEEE Transactions on Visualization and Computer Graphics},
+	Month = {November/December},
+	Note = {{DOI}~10.1109/TVCG.2008.184},
+	Number = {6},
+	Pages = {1467--1474},
+	Title = {Visualizing Temporal Patterns in Large Multivariate Data using Textual Pattern Matching},
+	Volume = {14},
+	Year = {2008},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1109/TVCG.2008.184}}
 
 @techreport{CGNS,
 	Annote = {CFD General Notation System (CGNS) is an industry standard for representing topologies.},
@@ -22,7 +156,12 @@
 
 @inproceedings{Levy2001,
 	Abstract = {We present the Circular Incident Edge Lists (CIEL), a new data structure and a high-performance algorithm for generating a series of iso-surfaces in a highly unstructured grid. Slicing-based volume rendering is also considered. The CIEL data structure represents all the combinatorial information of the grid, making it possible to optimize the classical propagation from local minima paradigm. The usual geometric structures are replaced by a more efficient combinatorial structure. An active edges list is maintained, and iteratively propagated from an iso-surface to the next one in a very efficient way. The intersected cells incident to each active edge are retrieved, and the intersection polygons are generated by circulating around their facets. This latter feature enables arbitrary irregular cells to be treated, such as those encountered in certain computational fluid dynamics (CFD) simulations. Since the CIEL data structure solely depends on the connections between the cells, it is possible to take into account dynamic changes in the geometry of the mesh and in property values, which only requires the sorted extrema list to be updated. Experiments have shown that our approach is significantly faster than classical methods. The major drawback of our method is its memory consumption, higher than most classical methods. However, experimental results show that it stays within a practical range.},
-	Annote = {Describes circular incident edge lists (CIEL) to represent polyhedral meshes. Circular incident edge lists are represented almost wholly by half edges. Each half-edge belongs to a particular face of a particular cell. Each half-edge has several links to capture the polyhedra topology:* A link to the next vertex in the face of the cell (equivalent to the adjacent edge link in a half-edge data structure).* A link to the half edge of the adjacent face in the same cell (equivalent to the adjacent polygon in a half-edge data structure).* A link to the corresponding half-edge in the adjacent cell along the face (which will be pointing in the opposite direction).* A linked list of all half-edges attached to a vertex.},
+	Annote = {Describes circular incident edge lists (CIEL) to represent polyhedral meshes. Circular incident edge lists are represented almost wholly by half edges. Each half-edge belongs to a particular face of a particular cell. Each half-edge has several links to capture the polyhedra topology:
+
+* A link to the next vertex in the face of the cell (equivalent to the adjacent edge link in a half-edge data structure).
+* A link to the half edge of the adjacent face in the same cell (equivalent to the adjacent polygon in a half-edge data structure).
+* A link to the corresponding half-edge in the adjacent cell along the face (which will be pointing in the opposite direction).
+* A linked list of all half-edges attached to a vertex.},
 	Author = {Bruno L\'{e}vy and Guillaume Caumon and St\'{e}phane Conreaux and Xavier Cavin},
 	Booktitle = {Proceedings of IEEE Visualization},
 	Date-Added = {2013-09-04 22:44:31 +0000},
@@ -78,9 +217,8 @@ in facets.},
 
 @book{VTKUsersGuide,
 	Annote = {User's guide for VTK.},
-	Author = {Kitware Inc.},
 	Date-Added = {2013-09-04 19:58:43 +0000},
-	Date-Modified = {2013-09-04 19:58:43 +0000},
+	Date-Modified = {2013-09-05 15:30:03 +0000},
 	Edition = {11th},
 	Note = {{ISBN} 978-1-930934-23-8},
 	Publisher = {Kitware Inc.},
@@ -160,10 +298,10 @@ I believe this was presented at EGPGV 2012 and when it becomes available in the 
 	Abstract = {This paper surveys the four software frameworks being developed as part of the visualization pillar of the SDAV (Scalable Data Management, Analysis, and Visualization) Institute, one of the SciDAC (Scientific Discovery through Advanced Computing) Institutes established by the ASCR (Advanced Scientific Computing Research) Program of the U.S. Department of Energy. These frameworks include EAVL (Extreme-scale Analysis and Visualization Library), DAX (Data Analysis at Extreme), DIY (Do It Yourself), and PISTON. The objective of these frameworks is to facilitate the adaptation of visualization and analysis algorithms to take advantage of the available parallelism in emerging multi-core and many-core hardware architectures, in anticipation of the need for such algorithms to be run in-situ with LCF (leadership-class facilities) simulation codes on supercomputers.},
 	Annote = {Describes four frameworks addressing large-scale HPC visualization problems.  These are EAVL, Dax, DIY, and PISTON.
 },
-	Author = {Christopher Sewell and Jeremy Meredith and Kenneth Moreland and Tom Peterka and Dave DeMarle and Li-ta Lo and James Ahrens and Robert Maynard and Berk Geveci},
+	Author = {Christopher Sewell and Jeremy Meredith and Kenneth Moreland and Tom Peterka and Dave DeMarle and Li-Ta Lo and James Ahrens and Robert Maynard and Berk Geveci},
 	Booktitle = {2012 SC Companion (Proceedings of the Ultrascale Visualization Workshop)},
 	Date-Added = {2013-09-03 23:17:47 +0000},
-	Date-Modified = {2013-09-03 23:17:47 +0000},
+	Date-Modified = {2013-09-05 15:26:04 +0000},
 	Month = {November},
 	Note = {{DOI}~10.1109/SC.Companion.2012.36},
 	Pages = {206--214},

@@ -497,10 +497,23 @@ likely need to be built to convert between the representations anyway.
                {Histogram, Integrate, Outline, Statistics}
 
 \noindent
-Description.
+Some scientific visualization algorithms perform an aggrication on the
+data, often performing an operation like sum or average on a field or
+derived field in the data. Thus, these algorithms \algclass{Globally
+  Reduce} data into a single value or small set of values.
+
+Reduction is a common operation in general parallel computing, and a
+reduction operation is ubiquitously supported across parallel computing
+environments. Consequently, once the reduction operation can be expressed
+in terms of an associative binary operation, implementing the reduction is
+straightforward. The reduction is complicated slightly on a hybrid parallel
+machine with multiple many-core machines clustered with an interconnect,
+but the reduction can still be performed by first reducing locally within
+the shared-memory many-core machine and then reducing those values across
+the distributed-memory interconnect.
 
 
-\algorithmclass{Probe Data}
+\algorithmclass{Query Data}
                {Searchable structure, Point location (single)} % Input
                {Varies} % Output
                {None} % Interdependence
@@ -508,8 +521,23 @@ Description.
                  Streamlines, Streaklines}
 
 \noindent
-Description.
+Most scientific visualization algorithms operate on a domain that is easily
+identifiable by the enumeration of the work (i.e. the point or cell
+identifier used to number threads). However some algorithms must
+\algclass{Query Data} to find a region of interest. Typically this means
+finding a cell containing a given coordinate in space. This is part of the
+fundamental operation of such algorithms based on resampling and particle
+advection. However, this query can also be needed for a more general set of
+attributes when performing query-based
+visualization\lcite{Glatter2008,Gosink2008,Johnson2009,Rubel2008}.
 
+Some queries, such as a spatial query on a uniform rectilinear grid, are
+straightforward, but many will require a specialized search
+structure. Several spatial search structures are
+proposed\lcite{Foley2005,Kalojanov2009,Kalojanov2011,Zhou2008,Zhou2010},
+most for the purpose of rendering, but there is yet little research on the
+building and using of query structures on massive threading for the
+purposes of scientific visualization.
 
 
 \algorithmclasssection{Remaining Algorithms}
