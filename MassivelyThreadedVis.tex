@@ -592,8 +592,54 @@ enumerations. ParaView also has four different versions of \alg{Slice},
 which have some optimizations for different data structures. There are also
 some algorithms specialized for a particular domain such as \alg{Halo
   Finder} and several versions of \alg{Material Interface} that are simply
-a conglomeration of other algorithms listed here. It would be unnecessarily
+a conglomeration of other algorithms listed here. \fix{Should verify that
+  to be the case.} It would be unnecessarily
 distracting to enumerate each of these variations.
+
+
+\section{Conclusion}
+\label{sec:Conclusion}
+
+\noindent
+Although we have made progress in designing massively threaded
+visualization algorithms for scientific visualization, we have a long way
+to go to support production visualization at extreme scale. Our current
+scientific and visualization needs incorporate the inclusion of many
+algorithms including those designed specifically for a specialized
+scientific domain. We as a community simply do not have the resources to
+independently address all of these needs.
+
+The development of our current petascale visualization tools is made
+possible by observations that allow us to design a general parallel
+capability that is then shared among many visualization catagories. If we
+cannot find a similar way to localize and reuse the parallel portion of our
+algorithms, we cannot succeed in supporting the next generation of parallel
+computing.
+
+In this paper we have identified eight catagories of shared features among
+these algorithms. By addressing the group of algorithms in each catagory as
+one, we can quickly achieve our goal of supporting extreme scale computing.
+
+\fix{Perhaps a weak conclusion. Maybe a coauthor will embellish :)}
+
+
+\section{Acknowledgments}
+
+\noindent
+This work was supported in part by the DOE Office of Science, Advanced
+Scientific Computing Research, under award number 10-014707, program
+manager Lucy Nowell.
+
+This work was supported in part by the Director, Office of Advanced
+Scientific Computing Research, Office of Science, of the U.S. Department of
+Energy under Contract No. 12-015215, through the Scientific Discovery
+through Advanced Computing (SciDAC) Institute of Scalable Data Management,
+Analysis and Visualization.
+
+Sandia National Laboratories is a multi-program laboratory operated by
+Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
+Corporation, for the U.S. Department of Energy's National Nuclear Security
+Administration.
 
 
 \bibliographystyle{abbrv}
