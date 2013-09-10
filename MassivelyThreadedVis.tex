@@ -321,7 +321,8 @@ serial counterparts.
                {Field element (single)} % Output
                {None} % Interdependence
                {Append Attributes, Append Datasets/Geometry, Calculator,
-                 Elevation, Generate Ids, Reflect, Transform, Warp}
+                 Elevation, Generate Ids, Random Vectors, Reflect, Surface
+                 Vectors, Texture Map, Transform, Warp}
 
 \noindent
 The \algclass{Basic Mapping} algorithms operate on an array of field values
@@ -377,7 +378,7 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
                {Cell connections (zero or more)} % Output
                {None} % Interdependence
                {Extract Cells by Region, Extract Selection, Mask Points,
-                 Threshold, Triangulate}
+                 Tetrahedralize, Threshold, Triangulate}
 
 \noindent
 There are several apparent patterns in algorithms that build a topological
@@ -421,7 +422,7 @@ still references it.
                {Cell topology (single)} % Input
                {Cell topology (constant number)} % Output
                {None} % Interdependence
-               {Glyph, Shrink, Tube}
+               {Glyph, Ribbon, Shrink, Tube}
 
 \noindent
 Algorithms that \algclass{Build Independent Topology} create new geometry
@@ -449,7 +450,8 @@ these data must be interpreted and managed as such.
                {Cell topology (single)} % Input
                {Cell topology (zero or more)} % Output
                {Duplicate output points} % Interdependence
-               {Clean, Clip, Contour, Extrusion, Isovolume, Slice, Subdivision}
+               {Clean, Clip, Contour, Extrusion, Isovolume, Slice,
+                 Subdivision, Tessellate}
 
 \noindent
 The most technically complicated class of algorithms we find that generate
@@ -586,14 +588,20 @@ algorithms in the ParaView application. There are some algorithms we have
 left out of this list for a variety of reasons, which we capture here.
 
 A very small number of algorithms have complicated interaction that appears
-to be unique to the nature of the operation. In particular, ParaView has
-two algorithms with complicated interaction that does not follow one of the
-previous patterns. The \alg{Connectivity} algorithm needs to traverse large
-neighborhood regions to find connected components. The \alg{Delaunay}
-algorithm needs to find all circles or spheres containing exactly 3 or 4
-points, respectively. Fortunately, there are few algorithms with unique
-thread interaction, so addressing these independently is much more
-tractable than reimplementing every algorithm in existence today.
+to be unique to the nature of the operation. The \alg{Connectivity}
+algorithm needs to traverse large neighborhood regions to find connected
+components. The \alg{Delaunay} algorithm needs to find all circles or
+spheres containing exactly 3 or 4 points, respectively. The \alg{Halo
+  Finder} algorithm identifies collections of points in mutual
+proximity. The \alg{Decimate} algorithm reduces the size of geometry by
+removing points based on an error metric. The \alg{Triangle Strips}
+algorithm finds connected strips in triangle meshes.
+
+There may be commonalities among some of these algorithms, but we are
+unsure if these similarities extend to shared solutions for
+interdependence.  Regardless, there are few algorithms with unique thread
+interaction, so addressing these independently is much more tractable than
+reimplementing every algorithm in existence today.
 
 We have left out one or more classes involving imaging algorithms. These
 include algorithms involving kernel convolutions and \alg{FFT}. Although
@@ -614,9 +622,9 @@ manipulations like extracting a block from an assembly. Other algorithms
 perform ordinary operations while making temporal
 adjustments\lcite{Biddiscombe2007} or other changes to pipeline execution
 management\lcite{Moreland2013:TVCG}. Also, although the \alg{Distributed
-  Data Decomposition} (\alg{D3}) algorithm can be compute intensive, its
-data partitioning makes little sense on the fine level dictated by massive
-threading.
+  Data Decomposition} (\alg{D3}) and similar redistribution algorithms can
+be compute intensive, their data partitioning makes little sense on the
+fine level dictated by massive threading.
 
 Finally, to avoid being overly pedantic, we omit several algorithms that
 are variations of algorithms listed or specialized combinations of
@@ -624,11 +632,10 @@ algorithms listed. For example, ParaView contains seven different versions
 of \alg{Generate Ids} where each extracts information from different
 enumerations. ParaView also has four different versions of \alg{Slice},
 which have some optimizations for different data structures. There are also
-some algorithms specialized for a particular domain such as \alg{Halo
-  Finder} and several versions of \alg{Material Interface} that are simply
-a conglomeration of other algorithms listed here. \fix{Should verify that
-  to be the case.} It would be unnecessarily distracting to enumerate each
-of these variations.
+several algorithms such as \alg{Material Interface} and \alg{Surface Flow}
+that are each basically a conglomeration of other algorithms listed here.
+It would be unnecessarily distracting to enumerate each of these
+variations.
 
 
 \section{Conclusion}
