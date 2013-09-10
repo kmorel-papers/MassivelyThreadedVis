@@ -187,6 +187,30 @@ behavior of the fundamental computation
 \section{Key Principles}
 \label{sec:KeyPrinciples}
 
+\begin{figure*}
+  \centering
+  \subfloat[Serial Partitioning]{
+    \includegraphics[scale=.93]{images/SliceSerial}
+    \label{fig:Partitioning:Serial}
+  }
+  \subfloat[Coarse-Parallel Partitioning]{
+    \includegraphics[scale=.93]{images/SliceCoarseParallel}
+    \label{fig:Partitioning:Coarse}
+  }
+  \subfloat[Massively-Threaded Partitioning]{
+    \includegraphics[scale=.93]{images/SliceMassiveThread}
+    \label{fig:Partitioning:Massive}
+  }
+  \caption{Partitioning with different levels of parallelism. In serial
+    processing~(\protect\subref*{fig:Partitioning:Serial}) geometry is
+    fully connected. Partitioning for parallel processing introduces
+    disconnected cells and repeated
+    vertices~(\protect\subref*{fig:Partitioning:Coarse}), which become
+    unmanageable in massive
+    threading~(\protect\subref*{fig:Partitioning:Massive}).  }
+  \label{fig:Partitioning}
+\end{figure*}
+
 \noindent
 Our current scalable scientific visualization relies on a coarse
 partitioning of data into domains that can often be processed
@@ -227,15 +251,25 @@ mapping from input to output rather than output to input.
 The second problem is that although plenty of algorithms are result
 invariant in that different partitioning results are \emph{equivalent}, the
 structures they build are not strictly \emph{isomorphic}. Partitioning data
-often results in duplicate information on domain boundaries. \fix{Add
-  figure and description demonstrating duplicated points when slice is
-  partitioned.}
+often results in duplicate information on domain boundaries. Consider for
+example the slice operation demonstrated in
+Figure~\ref{fig:Partitioning}. In serial~(\ref{fig:Partitioning:Serial}) it
+is straightforward it create a fully connected manifold surface. With
+coarse level partitioning~(\ref{fig:Partitioning:Coarse}), as is typically
+used in MPI processing, partitioning creates gaps between domains and
+replicated vertices at the boundaries. Massive
+threading~(\ref{fig:Partitioning:Massive}) can result in a completely
+disconnected mesh. Although all these results are equivalent with respect
+to the combined results, the different underlying data structures have
+different properties and associated capabilities.
 
 This duplication of results is a convenient mechanism to avoid
 communication in parallel processing, and in coarse-level parallelism the
-duplication is easily managed through ghost regions. However, if massive
-threading reduces each domain to every independent element, the duplication
-is dramatic and creating ghost regions is infeasible. It is therefore not
+duplication is easily managed through ghost regions. (Anecdotally this
+works best when each process has on the order of 100 thousand to 10 million
+cells per process\lcite{ParaViewTutorial}) However, if massive threading
+reduces each domain to every independent element, the duplication is
+dramatic and creating ghost regions is infeasible. It is therefore not
 practical to assume result invariance for most algorithms. Instead we have
 to identify and characterize the \keyterm{interdependence} of the work
 where concurrent threads produce coincident data or the threads otherwise
@@ -518,7 +552,7 @@ the distributed-memory interconnect.
 
 
 \algorithmclass{Query Data}
-               {Searchable structure, Query key (single)} % Input
+               {Searchable data, Query key (single)} % Input
                {Varies} % Output
                {None} % Interdependence
                {Probe Location, Quadric Clustering, Resample with Dataset,
@@ -640,6 +674,9 @@ Sandia National Laboratories is a multi-program laboratory operated by
 Sandia Corporation, a wholly owned subsidiary of Lockheed Martin
 Corporation, for the U.S. Department of Energy's National Nuclear Security
 Administration.
+
+\noindent
+{\small SAND 2013-7493C}
 
 
 \bibliographystyle{abbrv}

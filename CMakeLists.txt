@@ -6,4 +6,5 @@ include(UseLATEX.cmake)
 
 add_latex_document(MassivelyThreadedVis.tex
   BIBFILES MassivelyThreadedVis.bib
+  IMAGE_DIRS images
   )
