@@ -568,8 +568,12 @@ identifier used to number threads). However, some algorithms must
 \algclass{Query Data} to find a region of interest. Typically this means
 finding a cell containing a given coordinate in space. This is part of the
 fundamental operation of algorithms such as those based on resampling and
-particle advection. However, this query can also be needed for a more
-general set of attributes when performing query-based
+particle advection. (Note that query only solves the challenge of finding a
+single integration step in particle advection. It also needs to iterate, to
+connect successive computations, and to find terminations, but these can be
+straightforward extensions of existing algorithms.) Although spatial
+queries are common, queries for a more general set of attributes can also
+be needed when performing query-based
 visualization\lcite{Glatter2008,Gosink2008,Johnson2009,Rubel2008}.
 
 Some queries, such as a spatial query on a uniform rectilinear grid, are
@@ -661,8 +665,6 @@ computing.
 In this paper we have identified eight categories of shared features among
 these algorithms. By addressing the group of algorithms in each category as
 one, we can quickly achieve our goal of supporting extreme scale computing.
-
-\fix{Perhaps a weak conclusion. Maybe a coauthor will embellish :)}
 
 
 \section{Acknowledgments}
