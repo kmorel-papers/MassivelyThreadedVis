@@ -436,7 +436,9 @@ For example, consider the \alg{Glyph} filter. Each thread in this filter
 produces a small 3D object, like a scaled sphere or oriented arrow,
 centered at the point assigned to the thread. Each 3D object is completely
 disconnected (topologically) from its brethren and thus can be created
-independently and concurrently.
+independently and concurrently. Another example is the \alg{Shrink} filter,
+which contracts each cell toward its local center creating new points and
+intentionally breaking connections.
 
 The behavioral characteristics of the \algclass{Build Independent Topology}
 algorithms are very similar to the \algclass{Basic Mapping} and
