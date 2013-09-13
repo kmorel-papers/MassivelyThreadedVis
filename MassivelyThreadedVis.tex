@@ -592,13 +592,14 @@ derived field in the data. Thus, these algorithms \algclass{Globally
 
 Reduction is a common operation in general parallel computing, and a
 reduction operation is ubiquitously supported across parallel computing
-environments. Consequently, once the reduction operation can be expressed
-in terms of an associative binary operation, implementing the reduction is
-straightforward. The reduction is complicated slightly on a hybrid parallel
-machine with multiple many-core machines clustered with an interconnect,
-but the reduction can still be performed by first reducing locally within
-the shared-memory many-core machine and then reducing those values across
-the distributed-memory interconnect.
+environments\lcite{MPI,Sanders2011,Thrust,TBB,Quinn2004}. Consequently,
+once the reduction operation can be expressed in terms of an associative
+binary operation, implementing the reduction is straightforward. The
+reduction is complicated slightly on a hybrid parallel machine with
+multiple many-core machines clustered with an interconnect, but the
+reduction can still be performed by first reducing locally within the
+shared-memory many-core machine and then reducing those values across the
+distributed-memory interconnect\lcite{Dinan2010}.
 
 
 \algorithmclass{Query Data}

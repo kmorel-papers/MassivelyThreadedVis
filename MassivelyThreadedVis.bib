@@ -2,12 +2,42 @@
 %% http://bibdesk.sourceforge.net/
 
 
-%% Created for kmorel at 2013-09-10 11:03:42 -0600 
+%% Created for kmorel at 2013-09-13 12:34:28 -0600 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
+
+@inproceedings{Dinan2010,
+	Abstract = {The Message Passing Interface (MPI) is one of the most widely used programming models for parallel computing. However, the amount of memory available to an MPI process is limited by the amount of local memory within a compute node. Partitioned Global Address Space (PGAS) models such as Unified Parallel C (UPC) are growing in popularity because of their ability to provide a shared global address space that spans the memories of multiple compute nodes. However, taking advantage of UPC can require a large recoding effort for existing parallel applications.
+
+In this paper, we explore a new hybrid parallel programming model that combines MPI and UPC. This model allows MPI programmers incremental access to a greater amount of memory, enabling memory-constrained MPI codes to process larger data sets. In addition, the hybrid model offers UPC programmers an opportunity to create static UPC groups that are connected over MPI. As we demonstrate, the use of such groups can significantly improve the scalability of locality-constrained UPC codes. This paper presents a detailed description of the hybrid model and demonstrates its effectiveness in two applications: a random access benchmark and the Barnes-Hut cosmological simulation. Experimental results indicate that the hybrid model can greatly enhance performance; using hybrid UPC groups that span two cluster nodes, RA performance increases by a factor of 1.33 and using groups that span four cluster nodes, Barnes-Hut experiences a twofold speedup at the expense of a 2% increase in code size.
+},
+	Annote = {I originally came to this article looking for an example of doing the equivalent of MPI_Reduce in a hybrid parallel (generally MPI + OpenMP) mode. This paper has a nice example of a vector dot product (which requires a reduction).
+
+Unfortunately, this paper is not strictly a distributed-memory/shared-memory hybrid parallel paper. It is actually combining distributed memory (MPI) with PGAS (Unified Parallel C, UPC), which to me is wierd since both are designed to work over distribured memory. That said, the paper does have a mode called "Nested-funneled" that is roughly equivalent to distributed/shared hybrid (assuming that you run the PGAS part on an actual shared memory node), and so you can use that example as the same approach for switching UPC with OpenMP or some other parallel thread mode.},
+	Author = {James Dinan and Pavan Balaji and Ewing Lusk and P. Sadayappan and Rajeev Thakur},
+	Booktitle = {Proceedings of the 7th ACM International Conference on Computing Frontiers},
+	Date-Added = {2013-09-13 12:33:06 -0600},
+	Date-Modified = {2013-09-13 12:33:06 -0600},
+	Note = {{DOI}~10.1145/1787275.1787323},
+	Pages = {177--186},
+	Title = {Hybrid Parallel Programming with {MPI} and Unified Parallel {C}},
+	Year = {2010},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1145/1787275.1787323}}
+
+@book{MPI,
+	Annote = {My reference manual for MPI.  I've been using this as a cite for MPI.},
+	Author = {Mark Snir and Steve Otto and Steven Huss-Lederman and David Walker and Jack Dongarra},
+	Date-Added = {2013-09-13 11:41:14 -0600},
+	Date-Modified = {2013-09-13 11:41:14 -0600},
+	Edition = {second},
+	Note = {{ISBN} 0-262-69215-5},
+	Publisher = {MIT Press},
+	Title = {{MPI}: The Complete Reference},
+	Volume = {1, The {MPI} Core},
+	Year = {1998}}
 
 @techreport{ParaViewTutorial,
 	Annote = {The ParaView tutorial.},
