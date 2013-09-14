@@ -103,6 +103,8 @@
   \end{description}
 }
 
+\newcommand{\exampleimage}[2][.24]{\includegraphics[width=#1\textwidth]{images/Example#2}}
+
 \hyphenation{Para-View Map-Re-duce}
 
 \begin{document}
@@ -174,7 +176,7 @@ architectures\lcite{PISTON,Dyken2008,Maynard2013,EAVL,Meredith2012}, but
 all these projects focus on the implementation of a single or select fixed
 set of algorithms. Our goal in this paper is to present commonalities among
 various algorithms that share parallel-programming challenges. By
-addressing these higher level challenges, we can make better progress to
+1addressing these higher level challenges, we can make better progress to
 ensure that our scalable scientific visualization needs are met.
 
 To identify these high level parallel-programming challenges, we first
@@ -295,6 +297,25 @@ threading.
 \section{Classification of Visualization Algorithms}
 \label{sec:Classification}
 
+\begin{figure*}
+  \centering
+  \exampleimage{Elevation}
+  \exampleimage{GenerateIds}
+  \exampleimage{SurfaceVectors}
+  \exampleimage{Warp}
+  \caption{Examples of \algclass{Basic Mapping} algorithms.}
+  \label{fig:BasicMapping}
+\end{figure*}
+
+\begin{figure*}[hbt]
+  \centering
+  \exampleimage[.3]{CellCenters}
+  \exampleimage[.3]{CellDerivatives}
+  \exampleimage[.3]{MeshQuality}
+  \caption{Examples of \algclass{Map by Cell} algorithms.}
+  \label{fig:MapByCell}
+\end{figure*}
+
 \noindent
 To better understand the effort involved with updating our scientific
 visualization algorithms to massively threaded processors, we look into the
@@ -345,7 +366,8 @@ The typical purpose of this type of algorithm is to generate a derived
 field of data. Some of these operate on the coordinates of mesh points, for
 example the \alg{Transform} filter moves and warps the data with an affine
 transformation. However, when point coordinates are treated as a field, the
-behavior characteristics are the same.
+behavior characteristics are the same. Some examples of \algclass{Basic
+  Mapping} algorithms are given in Figure~\ref{fig:BasicMapping}.
 
 The \algclass{Basic Mapping} class is essentially just a parallel
 \texttt{for} operation over input and output field arrays. As such, basic
@@ -379,7 +401,8 @@ fields.
 Operations of this class involve characterizing the shape of the cell (as
 in the case of \alg{Cell Centers} and \alg{Mesh Quality}) or math
 operations over continuous function rather than discrete values (as is the
-case for \alg{Cell Derivatives}).
+case for \alg{Cell Derivatives}). Some examples of \algclass{Map by Cell}
+are given in Figure~\ref{fig:MapByCell}.
 
 Although parallel threads generally do access overlapped portions of the
 input data, the calculations computed by each thread are independent and
@@ -401,13 +424,33 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
                  Triangulate
                }
 
+\begin{figure*}
+  \centering
+  \exampleimage[.3]{Extract}
+  \exampleimage[.3]{Threshold}
+  \caption{Examples of \algclass{Reconnect Cell} algorithms.}
+  \label{fig:ReconnectCell}
+\end{figure*}
+
+\begin{figure*}
+  \centering
+  \exampleimage{Glyph}
+  \exampleimage{Ribbon}
+  \exampleimage{Shrink}
+  \exampleimage{Tube}
+  \caption{Examples of \algclass{Build Independent Topology} algorithms.}
+  \label{fig:BuildIndependentTopology}
+\end{figure*}
+
 \noindent
 There are several apparent patterns in algorithms that build a topological
 structure, the first of which is \algclass{Reconnect Cell}. The
 characteristics of these algorithms are that the output topology uses the
 same points as (or a subset of the points from) the input topology and that
 each output cell depends on exactly one input cell. In essence the
-connectivity of each cell is being redefined.
+connectivity of each cell is being redefined. Some examples of
+\algclass{Reconnect Cell} algorithms are given in
+Figure~\ref{fig:ReconnectCell}.
 
 Because each thread creates an independent list of cell connections,
 \algclass{Reconnect Cell} algorithms have no interdependence. This makes
@@ -463,7 +506,9 @@ centered at the point assigned to the thread. Each 3D object is completely
 disconnected (topologically) from its brethren and thus can be created
 independently and concurrently. Another example is the \alg{Shrink} filter,
 which contracts each cell toward its local center creating new points and
-intentionally breaking connections.
+intentionally breaking connections. These and other examples of
+\algclass{Build Independent Topology} algorithms are shown in
+Figure~\ref{fig:BuildIndependentTopology}.
 
 The behavioral characteristics of the \algclass{Build Independent Topology}
 algorithms are very similar to the \algclass{Basic Mapping} and
@@ -473,6 +518,26 @@ single or set of field values, \algclass{Build Independent Topology}
 algorithms produce topologies of cells, vertices, and point coordinates;
 these data must be interpreted and managed as such.
 
+
+\begin{figure*}
+  \centering
+  \exampleimage[.31]{Clip}
+  \exampleimage[.31]{Contour}
+  \exampleimage[.31]{Slice}
+  %% \exampleimage{Tessellate}
+  \caption{Examples of \algclass{Build Connected Topology} algorithms.}
+  \label{fig:BuildConnectedTopology}
+\end{figure*}
+
+\begin{figure*}
+  \centering
+  \exampleimage{ExtractEdges}
+  \exampleimage{FeatureEdges}
+  \exampleimage{Gradient}
+  \exampleimage{Normals}
+  \caption{Examples of \algclass{Capture Cell Adjacencies} algorithms.}
+  \label{fig:CaptureCellAdjacencies}
+\end{figure*}
 
 \algorithmclass{Build Connected Topology}
                {Cell topology (single)} % Input
@@ -491,12 +556,13 @@ these data must be interpreted and managed as such.
 
 \noindent
 The most technically complicated class of algorithms we find that generate
-geometry are those that \algclass{Build Connected Topology}. These
-algorithms create new geometry requiring both new points and new cells that
-connect these points. The points created by each thread are coincident with
-points created by another thread. These coincident points represent
-connections across elements created by different threads; capturing these
-connections creates an interdependence across threads.
+geometry are those that \algclass{Build Connected Topology}. Some examples
+are given in Figure~\ref{fig:BuildConnectedTopology}. These algorithms
+create new geometry requiring both new points and new cells that connect
+these points. The points created by each thread are coincident with points
+created by another thread. These coincident points represent connections
+across elements created by different threads; capturing these connections
+creates an interdependence across threads.
 
 The easiest solution to this problem is to simply ignore it by letting
 coincident points exist and losing the topological connections. Thus, the
@@ -546,7 +612,8 @@ or on a single cell and its incident features. These data are quickly
 locatable in general data structures. However, some algorithms need to
 \algclass{Capture Cell Adjacencies}. They typically operate by considering
 the points, edges, or faces in the mesh and examining the cells incident to
-them.
+them. Some examples of such algorithms are given in
+Figure~\ref{fig:CaptureCellAdjacencies}.
 
 In some types of data, particularly structured data with implicit
 topologies, enumerating the mesh elements and finding incident cells is
@@ -615,6 +682,13 @@ distributed-memory interconnect\lcite{Dinan2010}.
                  Streaklines
                }
 
+\begin{figure}[b]
+  \centering
+  \exampleimage[.4]{StreamTracer}
+  \caption{An example of a \algclass{Query Data} algorithm.}
+  \label{fig:QueryData}
+\end{figure}
+
 \noindent
 Most scientific visualization algorithms operate on a domain that is easily
 identifiable by the enumeration of the work (i.e. the point or cell
@@ -623,11 +697,12 @@ identifier used to number threads). However, some algorithms must
 finding a cell containing a given coordinate in space. This is part of the
 fundamental operation of algorithms such as those based on resampling and
 particle advection. (Note that query only solves the challenge of finding a
-single integration step in particle advection. It also needs to iterate, to
-connect successive computations, and to find terminations, but these can be
-straightforward extensions of existing algorithms.) Although spatial
-queries are common, queries for a more general set of attributes can also
-be needed when performing query-based
+single integration step in particle advection, shown in
+Figure~\ref{fig:QueryData}. It also needs to iterate, to connect successive
+computations, and to find terminations, but these can be straightforward
+extensions of existing algorithms.) Although spatial queries are common,
+queries for a more general set of attributes can also be needed when
+performing query-based
 visualization\lcite{Glatter2008,Gosink2008,Johnson2009,Rubel2008}.
 
 Some queries, such as a spatial query on a uniform rectilinear grid, are
