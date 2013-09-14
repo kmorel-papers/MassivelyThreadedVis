@@ -367,7 +367,9 @@ field of data. Some of these operate on the coordinates of mesh points, for
 example the \alg{Transform} filter moves and warps the data with an affine
 transformation. However, when point coordinates are treated as a field, the
 behavior characteristics are the same. Some examples of \algclass{Basic
-  Mapping} algorithms are given in Figure~\ref{fig:BasicMapping}.
+  Mapping} algorithms are given in Figure~\ref{fig:BasicMapping}. The
+example shuttle data is courtesy of the NASA Advanced Supercomputing
+Division.
 
 The \algclass{Basic Mapping} class is essentially just a parallel
 \texttt{for} operation over input and output field arrays. As such, basic
@@ -426,8 +428,8 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
 
 \begin{figure*}
   \centering
-  \exampleimage[.3]{Extract}
-  \exampleimage[.3]{Threshold}
+  \exampleimage[.43]{Extract}
+  \exampleimage[.43]{Threshold}
   \caption{Examples of \algclass{Reconnect Cell} algorithms.}
   \label{fig:ReconnectCell}
 \end{figure*}
