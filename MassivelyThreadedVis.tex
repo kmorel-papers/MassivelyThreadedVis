@@ -107,7 +107,7 @@
   \end{description}
 }
 
-\newcommand{\exampleimage}[2][.24]{\includegraphics[width=#1\textwidth]{images/Example#2}}
+\newcommand{\exampleimage}[2][.31]{\includegraphics[width=#1\textwidth]{images/Example#2}}
 
 \hyphenation{Para-View Map-Re-duce}
 
@@ -303,21 +303,12 @@ threading.
 
 \begin{figure*}
   \centering
-  \exampleimage{Elevation}
-  \exampleimage{GenerateIds}
-  \exampleimage{SurfaceVectors}
-  \exampleimage{Warp}
+  \exampleimage[.4]{Elevation}
+  \exampleimage[.4]{GenerateIds} \\
+  \exampleimage[.4]{SurfaceVectors}
+  \exampleimage[.4]{Warp}
   \caption{Examples of \algclass{Basic Mapping} algorithms.}
   \label{fig:BasicMapping}
-\end{figure*}
-
-\begin{figure*}[hbt]
-  \centering
-  \exampleimage[.3]{CellCenters}
-  \exampleimage[.3]{CellDerivatives}
-  \exampleimage[.3]{MeshQuality}
-  \caption{Examples of \algclass{Map by Cell} algorithms.}
-  \label{fig:MapByCell}
 \end{figure*}
 
 \noindent
@@ -408,6 +399,33 @@ to simplify porting using a generic programming interface over them.
                  Point Data to Cell Data
                }
 
+\begin{figure*}[p]
+  \centering
+  \exampleimage{CellCenters}
+  \exampleimage{CellDerivatives}
+  \exampleimage{MeshQuality}
+  \caption{Examples of \algclass{Map by Cell} algorithms.}
+  \label{fig:MapByCell}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \exampleimage[.4]{Extract}
+  \exampleimage[.4]{Threshold}
+  \caption{Examples of \algclass{Reconnect Cell} algorithms.}
+  \label{fig:ReconnectCell}
+\end{figure*}
+
+\begin{figure*}[p]
+  \centering
+  \exampleimage[.4]{Glyph}
+  \exampleimage[.4]{Ribbon}\\
+  \exampleimage[.4]{Shrink}
+  \exampleimage[.4]{Tube}
+  \caption{Examples of \algclass{Build Independent Topology} algorithms.}
+  \label{fig:BuildIndependentTopology}
+\end{figure*}
+
 \noindent
 The \algclass{Map by Cell} class is very similar to \algclass{Basic
   Mapping} with the exception that the input field arrays are not a
@@ -442,24 +460,6 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
                  Threshold,
                  Triangulate
                }
-
-\begin{figure*}
-  \centering
-  \exampleimage[.43]{Extract}
-  \exampleimage[.43]{Threshold}
-  \caption{Examples of \algclass{Reconnect Cell} algorithms.}
-  \label{fig:ReconnectCell}
-\end{figure*}
-
-\begin{figure*}
-  \centering
-  \exampleimage{Glyph}
-  \exampleimage{Ribbon}
-  \exampleimage{Shrink}
-  \exampleimage{Tube}
-  \caption{Examples of \algclass{Build Independent Topology} algorithms.}
-  \label{fig:BuildIndependentTopology}
-\end{figure*}
 
 \noindent
 There are several apparent patterns in algorithms that build a topological
@@ -514,6 +514,16 @@ still references it.
                  Tube
                }
 
+\begin{figure*}
+  \centering
+  \exampleimage[.4]{Clip}
+  \exampleimage[.4]{Contour} \\
+  \exampleimage[.4]{Slice}
+  \exampleimage[.4]{Tessellate}
+  \caption{Examples of \algclass{Build Connected Topology} algorithms.}
+  \label{fig:BuildConnectedTopology}
+\end{figure*}
+
 \noindent
 Algorithms that \algclass{Build Independent Topology} create new geometry
 requiring both new points and new cells that connect these points. The
@@ -542,20 +552,10 @@ these data must be interpreted and managed as such.
 
 \begin{figure*}
   \centering
-  \exampleimage[.31]{Clip}
-  \exampleimage[.31]{Contour}
-  \exampleimage[.31]{Slice}
-  %% \exampleimage{Tessellate}
-  \caption{Examples of \algclass{Build Connected Topology} algorithms.}
-  \label{fig:BuildConnectedTopology}
-\end{figure*}
-
-\begin{figure*}
-  \centering
-  \exampleimage{ExtractEdges}
-  \exampleimage{FeatureEdges}
-  \exampleimage{Gradient}
-  \exampleimage{Normals}
+  \exampleimage[.4]{ExtractEdges}
+  \exampleimage[.4]{FeatureEdges} \\
+  \exampleimage[.4]{Gradient}
+  \exampleimage[.4]{Normals}
   \caption{Examples of \algclass{Capture Cell Adjacencies} algorithms.}
   \label{fig:CaptureCellAdjacencies}
 \end{figure*}
@@ -711,13 +711,6 @@ distributed-memory interconnect\lcite{Dinan2010}.
                  Streaklines
                }
 
-\begin{figure}[b]
-  \centering
-  \exampleimage[.4]{StreamTracer}
-  \caption{An example of a \algclass{Query Data} algorithm.}
-  \label{fig:QueryData}
-\end{figure}
-
 \noindent
 Most scientific visualization algorithms operate on a domain that is easily
 identifiable by the enumeration of the work (i.e. the point or cell
@@ -734,14 +727,12 @@ queries for a more general set of attributes can also be needed when
 performing query-based
 visualization\lcite{Glatter2008,Gosink2008,Johnson2009,Rubel2008}.
 
-Some queries, such as a spatial query on a uniform rectilinear grid, are
-straightforward, but many will require a specialized search
-structure. Several spatial search structures are
-proposed\lcite{Foley2005,Kalojanov2009,Kalojanov2011,Zhou2008,Zhou2010},
-most for the purpose of rendering, but there is yet little research on the
-building and using of query structures on massive threading for the
-purposes of scientific visualization.
-
+\begin{figure}[b]
+  \centering
+  \exampleimage[.4]{StreamTracer}
+  \caption{An example of a \algclass{Query Data} algorithm.}
+  \label{fig:QueryData}
+\end{figure}
 
 \begin{table*}
   \centering
@@ -827,6 +818,14 @@ purposes of scientific visualization.
     \bottomrule
   \end{tabulary}
 \end{table*}
+
+Some queries, such as a spatial query on a uniform rectilinear grid, are
+straightforward, but many will require a specialized search
+structure. Several spatial search structures are
+proposed\lcite{Foley2005,Kalojanov2009,Kalojanov2011,Zhou2008,Zhou2010},
+most for the purpose of rendering, but there is yet little research on the
+building and using of query structures on massive threading for the
+purposes of scientific visualization.
 
 
 \algorithmclasssection{Remaining Algorithms}
