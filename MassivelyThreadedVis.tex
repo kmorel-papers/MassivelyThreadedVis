@@ -32,6 +32,7 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{varioref}
@@ -39,6 +40,7 @@
 \usepackage{ifthen}
 \usepackage{cite}
 \usepackage{subfig}
+\usepackage{tabulary}
 \usepackage{xspace}
 \usepackage[pdfborder={0 0 0}]{hyperref}
 \usepackage{verbatim}
@@ -193,15 +195,15 @@ behavior of the fundamental computation
 \begin{figure*}
   \centering
   \subfloat[Serial Partitioning]{
-    \includegraphics[scale=.93]{images/SliceSerial}
+    \includegraphics[scale=.9]{images/SliceSerial}
     \label{fig:Partitioning:Serial}
   }
   \subfloat[Coarse-Parallel Partitioning]{
-    \includegraphics[scale=.93]{images/SliceCoarseParallel}
+    \includegraphics[scale=.9]{images/SliceCoarseParallel}
     \label{fig:Partitioning:Coarse}
   }
   \subfloat[Massively-Threaded Partitioning]{
-    \includegraphics[scale=.93]{images/SliceMassiveThread}
+    \includegraphics[scale=.9]{images/SliceMassiveThread}
     \label{fig:Partitioning:Massive}
   }
   \caption{Partitioning with different levels of parallelism. In serial
@@ -714,6 +716,83 @@ proposed\lcite{Foley2005,Kalojanov2009,Kalojanov2011,Zhou2008,Zhou2010},
 most for the purpose of rendering, but there is yet little research on the
 building and using of query structures on massive threading for the
 purposes of scientific visualization.
+
+
+\begin{table*}
+  \centering
+  \caption{Overview of visualization algorithm classifications}
+  \label{table:Classifications}
+  \setlength{\defaultaddspace}{0.25\baselineskip}
+  \begin{tabulary}{\textwidth}{@{}LLlLLL@{}}
+    \toprule
+    Name
+    & Point Mapping
+    & Cell Mapping
+    & Field Mapping
+    & Collective Work
+    & Example Algorithm \\
+
+    \midrule
+
+    \algclass{Basic Mapping}
+    & Identity
+    & Identity
+    & One-to-one
+    & None
+    & \alg{Generate Ids} \\ \addlinespace
+
+    \algclass{Map by Cell}
+    & Identity
+    & Identity
+    & Points on cell to cell
+    & None
+    & \alg{Cell Centers} \\ \addlinespace
+
+    \algclass{Reconnect Cell}
+    & 1 to 0 or 1
+    & 1 to 0 or more
+    & Identity
+    & None
+    & \alg{Threshold} \\ \addlinespace
+
+    \algclass{Build Independent Topology}
+    & 1 cell to many points
+    & 1 to many
+    & Identity
+    & None
+    & \alg{Glyph} \\ \addlinespace
+
+    \algclass{Build Connected Topology}
+    & 1 cell to 0 or more points
+    & 1 to 0 or more
+    & Interpolated points
+    & Resolve duplicate points
+    & \alg{Contour} \\ \addlinespace
+
+    \algclass{Capture Cell Adjacencies}
+    & Identity
+    & Identity
+    & Interpolated incident fields
+    & Find duplicate input elements
+    & \alg{Normal Generation} \\ \addlinespace
+
+    \algclass{Globally Reduce}
+    & None in output
+    & None in output
+    & All to 1
+    & Global reduction
+    & \alg{Histogram} \\ \addlinespace
+
+    \algclass{Query Data}
+    & Identity
+    & Identity
+    & 1 query to 1 output
+    & Building query structure
+    & \alg{Stream Tracer} \\
+
+    \bottomrule
+  \end{tabulary}
+\end{table*}
 
 
 \algorithmclasssection{Remaining Algorithms}
