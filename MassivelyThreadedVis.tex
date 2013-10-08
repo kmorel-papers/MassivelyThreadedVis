@@ -176,7 +176,7 @@ architectures\lcite{PISTON,Dyken2008,Maynard2013,EAVL,Meredith2012}, but
 all these projects focus on the implementation of a single or select fixed
 set of algorithms. Our goal in this paper is to present commonalities among
 various algorithms that share parallel-programming challenges. By
-1addressing these higher level challenges, we can make better progress to
+addressing these higher level challenges, we can make better progress to
 ensure that our scalable scientific visualization needs are met.
 
 To identify these high level parallel-programming challenges, we first
@@ -232,7 +232,7 @@ correctly.
   all possible partitioning.
 \end{description}
 
-At first glance, it would appear that any algorithm abiding these key
+At first glance, it would appear that any algorithm abiding by these key
 principles could be partitioned indefinitely. However, there are two
 problems that arise when building a massively threaded algorithm in which
 the data is partitioned (potentially) down to domains of single elements.
@@ -257,7 +257,7 @@ structures they build are not strictly \emph{isomorphic}. Partitioning data
 often results in duplicate information on domain boundaries. Consider for
 example the slice operation demonstrated in
 Figure~\ref{fig:Partitioning}. In serial~(\ref{fig:Partitioning:Serial}) it
-is straightforward it create a fully connected manifold surface. With
+is straightforward to create a fully connected manifold surface. With
 coarse level partitioning~(\ref{fig:Partitioning:Coarse}), as is typically
 used in MPI processing, partitioning creates gaps between domains and
 replicated vertices at the boundaries. Massive
@@ -352,7 +352,7 @@ serial counterparts.
                  Random Vectors,
                  Reflect,
                  Surface Vectors,
-                 Texture Map Coordiantes,
+                 Texture Map Coordinates,
                  Transform,
                  Warp}
 
@@ -388,7 +388,7 @@ to simplify porting using a generic programming interface over them.
                {None} % Interdependence
                {
                  Cell Centers,
-                 Cell Derivitives,
+                 Cell Derivatives,
                  Mesh Quality,
                  Point Data to Cell Data
                }
