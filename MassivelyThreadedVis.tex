@@ -93,15 +93,16 @@
 %%   \vspace{\baselineskip}\noindent{\large\textbf{\algclass{#1}}}}
 \newcommand{\algorithmclasssection}[1]{\subsection*{#1}}
 
-\newcommand{\algorithmclass}[5]{
+\newcommand{\algorithmclass}[6]{
   \algorithmclasssection{#1} %
   %\vspace{-.4\baselineskip}
   \begin{description}[leftmargin=9em,style=nextline,noitemsep]
     \raggedright
-  \item[Input] #2
-  \item[Output] #3
-  \item[Interdependence] #4
-  \item[Algorithms] #5
+  \item[Point Mapping] #2
+  \item[Cell Mapping] #3
+  \item[Field Mapping] #4
+  \item[Collective Work] #5
+  \item[Algorithms] #6
   \end{description}
 }
 
@@ -341,9 +342,10 @@ algorithms within each class are straightforward to implement from their
 serial counterparts.
 
 \algorithmclass{Basic Mapping}
-               {Field element (single)} % Input
-               {Field element (single)} % Output
-               {None} % Interdependence
+               {Identity} % Point Mapping
+               {Identity} % Cell Mapping
+               {1 to 1} % Field Mapping
+               {None} % Collective Work
                {
                  Append Attributes,
                  Append Datasets,
@@ -356,7 +358,8 @@ serial counterparts.
                  Surface Vectors,
                  Texture Map Coordinates,
                  Transform,
-                 Warp}
+                 Warp
+               }
 
 \noindent
 The \algclass{Basic Mapping} algorithms operate on an array of field values
@@ -385,9 +388,10 @@ to simplify porting using a generic programming interface over them.
 
 
 \algorithmclass{Map by Cell}
-               {Cell topology (single)} % Input
-               {Field element (single)} % Output
-               {None} % Interdependence
+               {Identity} % Point Mapping
+               {Identity} % Cell Mapping
+               {Points on cell to cell} % Field Mapping
+               {None} % Collective Work
                {
                  Cell Centers,
                  Cell Derivatives,
@@ -416,9 +420,10 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
 
 
 \algorithmclass{Reconnect Cell}
-               {Cell topology (single)} % Input
-               {Cell connections (zero or more)} % Output
-               {None} % Interdependence
+               {1 to 0 or 1} % Point Mapping
+               {1 to 0 or more} % Cell Mapping
+               {Identity} % Field Mapping
+               {None} % Collective Work
                {
                  Extract Cells by Region,
                  Extract Selection,
@@ -487,9 +492,10 @@ still references it.
 
 
 \algorithmclass{Build Independent Topology}
-               {Cell topology (single)} % Input
-               {Cell topology (constant number)} % Output
-               {None} % Interdependence
+               {1 cell to many points} % Point Mapping
+               {1 to many (constant number)} % Cell Mapping
+               {Identity} % Field Mapping
+               {None} % Collective Work
                {
                  Glyph,
                  Ribbon,
@@ -544,9 +550,10 @@ these data must be interpreted and managed as such.
 \end{figure*}
 
 \algorithmclass{Build Connected Topology}
-               {Cell topology (single)} % Input
-               {Cell topology (zero or more)} % Output
-               {Duplicate output points} % Interdependence
+               {1 cell to 0 or more points} % Point Mapping
+               {1 to 0 or more} % Cell Mapping
+               {Interpolated points} % Field Mapping
+               {Resolve duplicate points} % Collective Work
                {
                  Clean,
                  Clip,
@@ -596,9 +603,10 @@ better results.
 
 
 \algorithmclass{Capture Cell Adjacencies}
-               {Constituent element (single) with incident cells (varies)} % Input
-               {Field or cell connections for constituent element (single)} % Output
-               {Duplicate constituent elements of input} % Interdependence
+               {Identity} % Point Mapping
+               {Identity} % Cell Mapping
+               {Interpolated incident fields} % Field Mapping
+               {Find incidence relationships} % Collective Work
                {
                  Curvature,
                  Cell Data to Point Data,
@@ -645,9 +653,10 @@ likely need to be built to convert between the representations anyway.
 
 
 \algorithmclass{Globally Reduce}
-               {Varies} % Input
-               {Aggregated value (single)} % Output
-               {Reduction on intermediate values} % Interdependence
+               {None in output} % Point Mapping
+               {None in output} % Cell Mapping
+               {All to 1} % Field Mapping
+               {Global reduction} % Collective Work
                {
                  Histogram,
                  Integrate,
@@ -674,9 +683,10 @@ distributed-memory interconnect\lcite{Dinan2010}.
 
 
 \algorithmclass{Query Data}
-               {Searchable data, Query key (single)} % Input
-               {Varies} % Output
-               {None} % Interdependence
+               {Identity} % Point Mapping
+               {Identity} % Cell Mapping
+               {1 query to 1 output} % Field Mapping
+               {None} % Collective Work
                {
                  Particle Tracer,
                  Probe Location,
@@ -737,7 +747,7 @@ purposes of scientific visualization.
     \algclass{Basic Mapping}
     & Identity
     & Identity
-    & One-to-one
+    & 1 to 1
     & None
     & \alg{Generate Ids} \\ \addlinespace
 
@@ -773,7 +783,7 @@ purposes of scientific visualization.
     & Identity
     & Identity
     & Interpolated incident fields
-    & Find duplicate input elements
+    & Find incidence relationships
     & \alg{Normal Generation} \\ \addlinespace
 
     \algclass{Globally Reduce}
