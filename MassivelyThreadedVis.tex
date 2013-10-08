@@ -96,7 +96,7 @@
 \newcommand{\algorithmclass}[7]{
   \algorithmclasssection{#1} %
   %\vspace{-.4\baselineskip}
-  \begin{description}[leftmargin=9em,style=nextline,noitemsep]
+  \begin{description}[leftmargin=10em,style=nextline,noitemsep]
     \raggedright
   \item[Separable Element] #2
   \item[Point Mapping] #3
@@ -328,11 +328,16 @@ tools. Specifically, we consider those algorithms available in ParaView, a
 popular open-source scalable scientific visualization
 application\lcite{ParaView}.
 
-For each algorithm in ParaView, we consider the smallest unit of data on
-which the algorithm can be sensibly run. Given this unit of
-\keyterm{input}, we identify what \keyterm{output} is created for
-it. Assuming that many threads are simultaneously producing output, we also
-identify the \keyterm{interdependence} among these threads.
+For each algorithm in ParaView, we apply the three key principles defined
+at the end of Section~\ref{sec:KeyPrinciples}: data separability,
+discoverable input mapping, and collective work. To address data
+separability, we consider the smallest unit of data on which a single
+thread can independently operate, which we call the \keyterm{separable
+  element}. To address discoverable input mapping, we consider how the
+elements of the input data map to the points and cells of the output
+geometry and the output fields. Finally, we also identify any
+\keyterm{collective work} the algorithm must perform in a multithreaded
+environment.
 
 From this information we derive classes of scientific visualization
 algorithms where the algorithms of each class share the same input,
@@ -340,7 +345,8 @@ output, and interdependence characteristics. This classification is
 constructive because once we resolve the challenges of mapping input to
 output and managing interdependence with collective operations, the
 algorithms within each class are straightforward to implement from their
-serial counterparts.
+serial counterparts. A reference for all these classifications is given at
+the end of this paper in Table~\ref{table:Classifications}.
 
 \algorithmclass{Basic Mapping}
                {Any} % Separable Element
@@ -695,11 +701,11 @@ distributed-memory interconnect\lcite{Dinan2010}.
                {Identity} % Point Mapping
                {Identity} % Cell Mapping
                {1 query to 1 output} % Field Mapping
-               {None} % Collective Work
+               {Building query structure} % Collective Work
                {
                  Particle Tracer,
                  Probe Location,
-                 Quadric Clustring,
+                 Quadric Clustering,
                  Resample with Dataset,
                  Stream Tracer,
                  Streaklines
@@ -901,8 +907,9 @@ algorithms, we cannot succeed in supporting the next generation of parallel
 computing.
 
 In this paper we have identified eight categories of shared features among
-these algorithms. By addressing the group of algorithms in each category as
-one, we can quickly achieve our goal of supporting extreme scale computing.
+these algorithms summarized in Table~\ref{table:Classifications}. By
+addressing the group of algorithms in each category as one, we can quickly
+achieve our goal of supporting extreme scale computing.
 
 
 \section{Acknowledgments}
