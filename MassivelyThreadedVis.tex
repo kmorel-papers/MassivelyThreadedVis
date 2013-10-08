@@ -93,16 +93,17 @@
 %%   \vspace{\baselineskip}\noindent{\large\textbf{\algclass{#1}}}}
 \newcommand{\algorithmclasssection}[1]{\subsection*{#1}}
 
-\newcommand{\algorithmclass}[6]{
+\newcommand{\algorithmclass}[7]{
   \algorithmclasssection{#1} %
   %\vspace{-.4\baselineskip}
   \begin{description}[leftmargin=9em,style=nextline,noitemsep]
     \raggedright
-  \item[Point Mapping] #2
-  \item[Cell Mapping] #3
-  \item[Field Mapping] #4
-  \item[Collective Work] #5
-  \item[Algorithms] #6
+  \item[Separable Element] #2
+  \item[Point Mapping] #3
+  \item[Cell Mapping] #4
+  \item[Field Mapping] #5
+  \item[Collective Work] #6
+  \item[Algorithms] #7
   \end{description}
 }
 
@@ -342,6 +343,7 @@ algorithms within each class are straightforward to implement from their
 serial counterparts.
 
 \algorithmclass{Basic Mapping}
+               {Any} % Separable Element
                {Identity} % Point Mapping
                {Identity} % Cell Mapping
                {1 to 1} % Field Mapping
@@ -388,6 +390,7 @@ to simplify porting using a generic programming interface over them.
 
 
 \algorithmclass{Map by Cell}
+               {Cell} % Separable Element
                {Identity} % Point Mapping
                {Identity} % Cell Mapping
                {Points on cell to cell} % Field Mapping
@@ -420,6 +423,7 @@ algorithm to perform \algclass{Map by Cell}\lcite{EAVL,Moreland2011:LDAV}.
 
 
 \algorithmclass{Reconnect Cell}
+               {Cell} % Separable Element
                {1 to 0 or 1} % Point Mapping
                {1 to 0 or more} % Cell Mapping
                {Identity} % Field Mapping
@@ -492,8 +496,9 @@ still references it.
 
 
 \algorithmclass{Build Independent Topology}
-               {1 cell to many points} % Point Mapping
-               {1 to many (constant number)} % Cell Mapping
+               {Any} % Separable Element
+               {1 element to many points} % Point Mapping
+               {1 element to many cells (constant number)} % Cell Mapping
                {Identity} % Field Mapping
                {None} % Collective Work
                {
@@ -550,6 +555,7 @@ these data must be interpreted and managed as such.
 \end{figure*}
 
 \algorithmclass{Build Connected Topology}
+               {Cell} % Separable Element
                {1 cell to 0 or more points} % Point Mapping
                {1 to 0 or more} % Cell Mapping
                {Interpolated points} % Field Mapping
@@ -603,6 +609,7 @@ better results.
 
 
 \algorithmclass{Capture Cell Adjacencies}
+               {Point, edge, or face} % Separable Element
                {Identity} % Point Mapping
                {Identity} % Cell Mapping
                {Interpolated incident fields} % Field Mapping
@@ -653,6 +660,7 @@ likely need to be built to convert between the representations anyway.
 
 
 \algorithmclass{Globally Reduce}
+               {Any} % Separable Element
                {None in output} % Point Mapping
                {None in output} % Cell Mapping
                {All to 1} % Field Mapping
@@ -683,6 +691,7 @@ distributed-memory interconnect\lcite{Dinan2010}.
 
 
 \algorithmclass{Query Data}
+               {Point, key, or query} % Separable Element
                {Identity} % Point Mapping
                {Identity} % Cell Mapping
                {1 query to 1 output} % Field Mapping
@@ -732,10 +741,11 @@ purposes of scientific visualization.
   \centering
   \caption{Overview of visualization algorithm classifications}
   \label{table:Classifications}
-  \setlength{\defaultaddspace}{0.25\baselineskip}
-  \begin{tabulary}{\textwidth}{@{}LLlLLL@{}}
+  \setlength{\defaultaddspace}{0.35\baselineskip}
+  \begin{tabulary}{\textwidth}{@{}LLLLLLL@{}}
     \toprule
     Name
+    & Separable Element
     & Point Mapping
     & Cell Mapping
     & Field Mapping
@@ -745,6 +755,7 @@ purposes of scientific visualization.
     \midrule
 
     \algclass{Basic Mapping}
+    & Any
     & Identity
     & Identity
     & 1 to 1
@@ -752,6 +763,7 @@ purposes of scientific visualization.
     & \alg{Generate Ids} \\ \addlinespace
 
     \algclass{Map by Cell}
+    & Cell
     & Identity
     & Identity
     & Points on cell to cell
@@ -759,6 +771,7 @@ purposes of scientific visualization.
     & \alg{Cell Centers} \\ \addlinespace
 
     \algclass{Reconnect Cell}
+    & Cell
     & 1 to 0 or 1
     & 1 to 0 or more
     & Identity
@@ -766,13 +779,15 @@ purposes of scientific visualization.
     & \alg{Threshold} \\ \addlinespace
 
     \algclass{Build Independent Topology}
-    & 1 cell to many points
-    & 1 to many
+    & Any
+    & 1 element to many points
+    & 1 element to many cells
     & Identity
     & None
     & \alg{Glyph} \\ \addlinespace
 
     \algclass{Build Connected Topology}
+    & Cell
     & 1 cell to 0 or more points
     & 1 to 0 or more
     & Interpolated points
@@ -780,6 +795,7 @@ purposes of scientific visualization.
     & \alg{Contour} \\ \addlinespace
 
     \algclass{Capture Cell Adjacencies}
+    & Point, edge, or face
     & Identity
     & Identity
     & Interpolated incident fields
@@ -787,6 +803,7 @@ purposes of scientific visualization.
     & \alg{Normal Generation} \\ \addlinespace
 
     \algclass{Globally Reduce}
+    & Any
     & None in output
     & None in output
     & All to 1
@@ -794,6 +811,7 @@ purposes of scientific visualization.
     & \alg{Histogram} \\ \addlinespace
 
     \algclass{Query Data}
+    & Point, key, or query
     & Identity
     & Identity
     & 1 query to 1 output
